@@ -5,8 +5,8 @@ import { ProcessCard } from "@/components/ProcessCard";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { CreateProcessModal } from "@/components/CreateProcessModal";
 
-// Mock data
 const mockProcesses = [
   {
     id: "PRO001",
@@ -36,6 +36,7 @@ const mockProcesses = [
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { toast } = useToast();
 
   const filteredProcesses = mockProcesses.filter((process) => {
@@ -67,7 +68,10 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Process Management</h1>
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button 
+            className="bg-primary hover:bg-primary/90"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
             <PlusCircle className="mr-2 h-4 w-4" />
             New Process
           </Button>
@@ -99,6 +103,11 @@ const Index = () => {
           )}
         </div>
       </div>
+
+      <CreateProcessModal 
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+      />
     </div>
   );
 };
