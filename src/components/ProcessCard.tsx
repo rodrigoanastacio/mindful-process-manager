@@ -80,6 +80,16 @@ export const ProcessCard = ({
   const { toast } = useToast();
 
   const handleSearchUpdates = async () => {
+    const apiKey = localStorage.getItem('jusbrasil_api_key');
+    if (!apiKey) {
+      toast({
+        title: "Configuração Necessária",
+        description: "Por favor, configure sua chave de API do JusBrasil primeiro.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setShowUpdates(true);
     try {
