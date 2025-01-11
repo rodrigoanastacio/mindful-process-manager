@@ -9,7 +9,8 @@ import {
   CheckCircle,
   PauseCircle,
   User,
-  FileDown
+  FileDown,
+  Search
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -18,6 +19,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { ProcessUpdates } from "./ProcessUpdates";
+import { searchProcess } from "@/services/jusbrasilApi";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProcessCardProps {
   id: string;
@@ -68,65 +74,112 @@ export const ProcessCard = ({
   onExport
 }: ProcessCardProps) => {
   const StatusIcon = statusConfig[status].icon;
+  const [showUpdates, setShowUpdates] = useState(false);
+  const [updates, setUpdates] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSearchUpdates = async () => {
+    setIsLoading(true);
+    setShowUpdates(true);
+    try {
+      const processDetails = await searchProcess(protocol);
+      if (processDetails?.updates) {
+        setUpdates(processDetails.updates);
+      } else {
+        toast({
+          title: "Erro na consulta",
+          description: "Não foi possível encontrar atualizações para este processo.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao consultar as atualizações.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Card className="glass-card p-6 animate-fade-up hover:shadow-lg transition-shadow">
-      <div className="flex justify-between items-start">
-        <div className="space-y-3 flex-1">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2 flex-wrap gap-2">
-              <Badge variant="outline" className="text-xs">
-                Protocolo: {protocol}
-              </Badge>
-              <span className={`flex items-center space-x-1 ${statusConfig[status].color}`}>
-                <StatusIcon className="h-4 w-4" />
-                <span>{statusConfig[status].label}</span>
-              </span>
-              <Badge className={`${priorityConfig[priority]}`}>
-                {priority.charAt(0).toUpperCase() + priority.slice(1)}
-              </Badge>
+    <div className="space-y-4">
+      <Card className="glass-card p-6 animate-fade-up hover:shadow-lg transition-shadow">
+        <div className="flex justify-between items-start">
+          <div className="space-y-3 flex-1">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2 flex-wrap gap-2">
+                <Badge variant="outline" className="text-xs">
+                  Protocolo: {protocol}
+                </Badge>
+                <span className={`flex items-center space-x-1 ${statusConfig[status].color}`}>
+                  <StatusIcon className="h-4 w-4" />
+                  <span>{statusConfig[status].label}</span>
+                </span>
+                <Badge className={`${priorityConfig[priority]}`}>
+                  {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                </Badge>
+              </div>
+              <h3 className="text-lg font-semibold">{title}</h3>
             </div>
-            <h3 className="text-lg font-semibold">{title}</h3>
-          </div>
-          <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
-          
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <Tooltip>
-              <TooltipTrigger className="flex items-center space-x-2 text-sm text-gray-500">
-                <User className="h-4 w-4" />
-                <span>{assignee}</span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Departamento: {department}</p>
-              </TooltipContent>
-            </Tooltip>
+            <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
             
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <CalendarDays className="h-4 w-4" />
-              <span>Prazo: {deadline}</span>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <Tooltip>
+                <TooltipTrigger className="flex items-center space-x-2 text-sm text-gray-500">
+                  <User className="h-4 w-4" />
+                  <span>{assignee}</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Departamento: {department}</p>
+                </TooltipContent>
+              </Tooltip>
+              
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <CalendarDays className="h-4 w-4" />
+                <span>Prazo: {deadline}</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSearchUpdates}
+                className="flex items-center gap-2"
+              >
+                <Search className="h-4 w-4" />
+                Consultar Atualizações
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger className="hover:bg-gray-100 p-2 rounded-full transition-colors">
+                  <MoreVertical className="h-5 w-5 text-gray-500" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={onArchive}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Arquivar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onExport}>
+                    <FileDown className="h-4 w-4 mr-2" />
+                    Exportar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onDelete} className="text-red-600">
+                    Excluir
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
+      </Card>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className="hover:bg-gray-100 p-2 rounded-full transition-colors">
-            <MoreVertical className="h-5 w-5 text-gray-500" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={onArchive}>
-              <FileText className="h-4 w-4 mr-2" />
-              Arquivar
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onExport}>
-              <FileDown className="h-4 w-4 mr-2" />
-              Exportar
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onDelete} className="text-red-600">
-              Excluir
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </Card>
+      {showUpdates && (
+        <ProcessUpdates updates={updates} isLoading={isLoading} />
+      )}
+    </div>
   );
 };
