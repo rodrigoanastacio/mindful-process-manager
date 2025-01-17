@@ -5,7 +5,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ProcessHistory } from "./ProcessHistory";
 import { Badge } from "./ui/badge";
-import { Editor } from '@tinymce/tinymce-react';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { 
   CalendarDays, 
   User, 
@@ -97,25 +98,30 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
                 <form onSubmit={handleAddComment} className="space-y-4">
                   <div>
                     <Label htmlFor="comment">Comentário</Label>
-                    <Editor
-                      id="comment"
-                      value={newComment}
-                      onEditorChange={(content) => setNewComment(content)}
-                      init={{
-                        height: 300,
-                        menubar: false,
-                        plugins: [
-                          'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                          'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                          'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-                        ],
-                        toolbar: 'undo redo | blocks | ' +
-                          'bold italic forecolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ' +
-                          'removeformat | help',
-                        content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:14px }'
-                      }}
-                    />
+                    <div className="mt-2">
+                      <CKEditor
+                        editor={ClassicEditor}
+                        data={newComment}
+                        onChange={(event, editor) => {
+                          const data = editor.getData();
+                          setNewComment(data);
+                        }}
+                        config={{
+                          toolbar: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            'link',
+                            'bulletedList',
+                            'numberedList',
+                            '|',
+                            'undo',
+                            'redo'
+                          ]
+                        }}
+                      />
+                    </div>
                   </div>
                   <Button type="submit" className="w-full">
                     <Plus className="h-4 w-4 mr-2" />
