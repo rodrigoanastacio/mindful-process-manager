@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -62,6 +62,8 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0">
+        <DialogTitle className="sr-only">Detalhes do Processo</DialogTitle>
+        
         <div className="p-6 bg-primary/5 border-b">
           <div className="flex items-center justify-between">
             <div>
@@ -102,23 +104,9 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
                       <CKEditor
                         editor={ClassicEditor}
                         data={newComment}
-                        onChange={(event, editor) => {
+                        onChange={(event: any, editor: any) => {
                           const data = editor.getData();
                           setNewComment(data);
-                        }}
-                        config={{
-                          toolbar: [
-                            'heading',
-                            '|',
-                            'bold',
-                            'italic',
-                            'link',
-                            'bulletedList',
-                            'numberedList',
-                            '|',
-                            'undo',
-                            'redo'
-                          ]
                         }}
                       />
                     </div>
