@@ -10,7 +10,8 @@ import {
   PauseCircle,
   User,
   FileDown,
-  Search
+  Search,
+  Maximize2
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -24,6 +25,7 @@ import { useState } from "react";
 import { ProcessUpdates } from "./ProcessUpdates";
 import { searchProcess } from "@/services/jusbrasilApi";
 import { useToast } from "@/components/ui/use-toast";
+import { ProcessDetailsModal } from "./ProcessDetailsModal";
 
 interface ProcessCardProps {
   id: string;
@@ -77,6 +79,7 @@ export const ProcessCard = ({
   const [showUpdates, setShowUpdates] = useState(false);
   const [updates, setUpdates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const { toast } = useToast();
 
   const handleSearchUpdates = async () => {
@@ -154,15 +157,26 @@ export const ProcessCard = ({
             </div>
 
             <div className="flex justify-between items-center mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSearchUpdates}
-                className="flex items-center gap-2"
-              >
-                <Search className="h-4 w-4" />
-                Consultar Atualizações
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSearchUpdates}
+                  className="flex items-center gap-2"
+                >
+                  <Search className="h-4 w-4" />
+                  Consultar Atualizações
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowDetails(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                  Ver Detalhes
+                </Button>
+              </div>
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="hover:bg-gray-100 p-2 rounded-full transition-colors">
@@ -190,6 +204,23 @@ export const ProcessCard = ({
       {showUpdates && (
         <ProcessUpdates updates={updates} isLoading={isLoading} />
       )}
+
+      <ProcessDetailsModal
+        open={showDetails}
+        onOpenChange={setShowDetails}
+        process={{
+          id,
+          protocol,
+          title,
+          description,
+          status,
+          date,
+          deadline,
+          assignee,
+          department,
+          priority
+        }}
+      />
     </div>
   );
 };
