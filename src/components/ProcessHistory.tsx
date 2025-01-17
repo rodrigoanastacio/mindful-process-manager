@@ -1,61 +1,52 @@
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Clock, 
-  FileText, 
-  User, 
-  Edit, 
-  Trash, 
-  Upload,
-  MessageSquare 
-} from "lucide-react";
+import { MessageSquare, AlertCircle, FileText } from "lucide-react";
 
 interface HistoryEntry {
   id: string;
-  type: "edit" | "comment" | "status" | "document" | "delete";
+  type: "comment" | "status" | "document";
   user: string;
   date: string;
   description: string;
 }
-
-const iconMap = {
-  edit: Edit,
-  comment: MessageSquare,
-  status: Clock,
-  document: Upload,
-  delete: Trash,
-};
 
 interface ProcessHistoryProps {
   entries: HistoryEntry[];
 }
 
 export const ProcessHistory = ({ entries }: ProcessHistoryProps) => {
+  const getIcon = (type: HistoryEntry["type"]) => {
+    switch (type) {
+      case "comment":
+        return <MessageSquare className="h-4 w-4" />;
+      case "status":
+        return <AlertCircle className="h-4 w-4" />;
+      case "document":
+        return <FileText className="h-4 w-4" />;
+    }
+  };
+
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Histórico do Processo</h3>
-      <ScrollArea className="h-[400px] pr-4">
-        <div className="space-y-4">
-          {entries.map((entry) => {
-            const Icon = iconMap[entry.type];
-            
-            return (
-              <div key={entry.id} className="flex items-start space-x-3">
-                <div className="bg-gray-100 p-2 rounded-full">
-                  <Icon className="h-4 w-4 text-gray-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium">{entry.user}</span>
-                    <span className="text-sm text-gray-500">{entry.date}</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">{entry.description}</p>
-                </div>
+    <ScrollArea className="h-[600px] rounded-md border p-4">
+      <div className="space-y-4">
+        {entries.map((entry) => (
+          <div
+            key={entry.id}
+            className="flex gap-4 p-4 rounded-lg bg-gray-50"
+          >
+            <div className="mt-1">{getIcon(entry.type)}</div>
+            <div className="flex-1">
+              <div className="flex justify-between items-start mb-1">
+                <span className="font-medium">{entry.user}</span>
+                <span className="text-sm text-gray-500">{entry.date}</span>
               </div>
-            );
-          })}
-        </div>
-      </ScrollArea>
-    </Card>
+              <div 
+                className="text-sm text-gray-600 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: entry.description }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
   );
 };

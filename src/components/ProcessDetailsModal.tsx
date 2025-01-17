@@ -1,16 +1,14 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ProcessHistory } from "./ProcessHistory";
 import { Badge } from "./ui/badge";
+import { Editor } from '@tinymce/tinymce-react';
 import { 
   CalendarDays, 
   User, 
-  MessageSquare,
   Plus
 } from "lucide-react";
 
@@ -99,12 +97,24 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
                 <form onSubmit={handleAddComment} className="space-y-4">
                   <div>
                     <Label htmlFor="comment">Comentário</Label>
-                    <Textarea
+                    <Editor
                       id="comment"
                       value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Digite seu comentário..."
-                      className="min-h-[100px]"
+                      onEditorChange={(content) => setNewComment(content)}
+                      init={{
+                        height: 300,
+                        menubar: false,
+                        plugins: [
+                          'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                          'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                          'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                        ],
+                        toolbar: 'undo redo | blocks | ' +
+                          'bold italic forecolor | alignleft aligncenter ' +
+                          'alignright alignjustify | bullist numlist outdent indent | ' +
+                          'removeformat | help',
+                        content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:14px }'
+                      }}
                     />
                   </div>
                   <Button type="submit" className="w-full">
