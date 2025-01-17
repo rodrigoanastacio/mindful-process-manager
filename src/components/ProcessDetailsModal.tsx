@@ -5,8 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ProcessHistory } from "./ProcessHistory";
 import { Badge } from "./ui/badge";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Editor } from '@tinymce/tinymce-react';
 import { 
   CalendarDays, 
   User, 
@@ -101,17 +100,30 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
                   <div>
                     <Label htmlFor="comment">Comentário</Label>
                     <div className="mt-2">
-                      <CKEditor
-                        editor={ClassicEditor}
-                        data={newComment}
-                        onChange={(event: any, editor: any) => {
-                          const data = editor.getData();
-                          setNewComment(data);
+                      <Editor
+                        apiKey={null} // Não é necessário para desenvolvimento local
+                        value={newComment}
+                        onEditorChange={(content) => {
+                          setNewComment(content);
+                        }}
+                        init={{
+                          height: 300,
+                          menubar: false,
+                          plugins: [
+                            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                          ],
+                          toolbar: 'undo redo | blocks | ' +
+                            'bold italic forecolor | alignleft aligncenter ' +
+                            'alignright alignjustify | bullist numlist outdent indent | ' +
+                            'removeformat | help',
+                          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                         }}
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
                     <Plus className="h-4 w-4 mr-2" />
                     Adicionar Comentário
                   </Button>
