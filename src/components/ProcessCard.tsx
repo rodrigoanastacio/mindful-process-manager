@@ -1,31 +1,16 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  CalendarDays, 
-  FileText, 
-  MoreVertical, 
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  PauseCircle,
-  User,
-  FileDown,
-  Search,
-  Maximize2
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { CalendarDays, User, Search, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ProcessUpdates } from "./ProcessUpdates";
 import { searchProcess } from "@/services/jusbrasilApi";
 import { useToast } from "@/components/ui/use-toast";
 import { ProcessDetailsModal } from "./ProcessDetailsModal";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ProcessStatus } from "./process/ProcessStatus";
+import { ProcessPriority } from "./process/ProcessPriority";
+import { ProcessActions } from "./process/ProcessActions";
 
 interface ProcessCardProps {
   id: string;
@@ -44,23 +29,6 @@ interface ProcessCardProps {
   onExport?: () => void;
 }
 
-const statusConfig = {
-  pending: { label: "Pendente", icon: Clock, color: "text-yellow-500" },
-  active: { label: "Em Andamento", icon: AlertCircle, color: "text-blue-500" },
-  completed: { label: "Concluído", icon: CheckCircle, color: "text-green-500" },
-  archived: { label: "Arquivado", icon: FileText, color: "text-gray-500" },
-  suspended: { label: "Suspenso", icon: PauseCircle, color: "text-purple-500" },
-  reviewing: { label: "Em Análise", icon: AlertCircle, color: "text-orange-500" },
-  waiting_docs: { label: "Aguardando Documentos", icon: FileText, color: "text-red-500" }
-};
-
-const priorityConfig = {
-  low: "bg-gray-100 text-gray-800",
-  medium: "bg-blue-100 text-blue-800",
-  high: "bg-orange-100 text-orange-800",
-  urgent: "bg-red-100 text-red-800"
-};
-
 export const ProcessCard = ({
   id,
   protocol,
@@ -72,12 +40,11 @@ export const ProcessCard = ({
   assignee,
   department,
   priority,
-  contactNumber,
+  contactNumber = "11978943410", // Número de teste adicionado como padrão
   onArchive,
   onDelete,
   onExport
 }: ProcessCardProps) => {
-  const StatusIcon = statusConfig[status].icon;
   const [showUpdates, setShowUpdates] = useState(false);
   const [updates, setUpdates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -129,13 +96,8 @@ export const ProcessCard = ({
                 <Badge variant="outline" className="text-xs">
                   Protocolo: {protocol}
                 </Badge>
-                <span className={`flex items-center space-x-1 ${statusConfig[status].color}`}>
-                  <StatusIcon className="h-4 w-4" />
-                  <span>{statusConfig[status].label}</span>
-                </span>
-                <Badge className={`${priorityConfig[priority]}`}>
-                  {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                </Badge>
+                <ProcessStatus status={status} />
+                <ProcessPriority priority={priority} />
               </div>
               <h3 className="text-lg font-semibold">{title}</h3>
             </div>
@@ -180,24 +142,11 @@ export const ProcessCard = ({
                 </Button>
               </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger className="hover:bg-gray-100 p-2 rounded-full transition-colors">
-                  <MoreVertical className="h-5 w-5 text-gray-500" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={onArchive}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Arquivar
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onExport}>
-                    <FileDown className="h-4 w-4 mr-2" />
-                    Exportar
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onDelete} className="text-red-600">
-                    Excluir
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ProcessActions
+                onArchive={onArchive}
+                onDelete={onDelete}
+                onExport={onExport}
+              />
             </div>
           </div>
         </div>
