@@ -29,17 +29,25 @@ export const ProcessHistory = ({ entries, contactNumber }: ProcessHistoryProps) 
 
   const formatWhatsAppMessage = (entry: HistoryEntry) => {
     const message = `
-🔔 *Atualização do Processo*
+*Atualização no Status do Processo*
 
-📝 *Mensagem*: ${entry.description}
+Olá!
 
+Uma nova atualização foi registrada no processo.
+
+*Detalhes da Atualização:*
+📋 *Tipo*: ${entry.type === 'comment' ? 'Comentário' : entry.type === 'status' ? 'Mudança de Status' : 'Documento'}
 👤 *Responsável*: ${entry.user}
 📅 *Data*: ${entry.date}
+📝 *Descrição*: ${entry.description}
 
 _Esta é uma mensagem automática do sistema de gestão de processos._
 _Por favor, não responda diretamente a esta mensagem._
 
-📞 Para mais informações, entre em contato conosco.
+📞 Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
+
+Atenciosamente,
+Equipe de Gerenciamento de Processos
     `.trim();
 
     return message;
