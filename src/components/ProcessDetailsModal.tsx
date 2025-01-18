@@ -26,6 +26,7 @@ interface ProcessDetailsModalProps {
     assignee: string;
     department: string;
     priority: string;
+    contactNumber?: string;
   };
 }
 
@@ -119,7 +120,7 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
 
             <div>
               <h3 className="text-lg font-semibold mb-4">Histórico do Processo</h3>
-              <ProcessHistory entries={history} />
+              <ProcessHistory entries={history} contactNumber={process.contactNumber} />
             </div>
           </div>
         </div>

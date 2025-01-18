@@ -38,6 +38,7 @@ interface ProcessCardProps {
   assignee: string;
   department: string;
   priority: "low" | "medium" | "high" | "urgent";
+  contactNumber?: string;
   onArchive?: () => void;
   onDelete?: () => void;
   onExport?: () => void;
@@ -71,6 +72,7 @@ export const ProcessCard = ({
   assignee,
   department,
   priority,
+  contactNumber,
   onArchive,
   onDelete,
   onExport
@@ -218,7 +220,8 @@ export const ProcessCard = ({
           deadline,
           assignee,
           department,
-          priority
+          priority,
+          contactNumber
         }}
       />
     </div>
