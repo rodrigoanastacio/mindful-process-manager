@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ProcessHistory } from "./ProcessHistory";
 import { Badge } from "./ui/badge";
-import { Editor } from '@tinymce/tinymce-react';
+import { Textarea } from "./ui/textarea";
 import { 
   CalendarDays, 
   User, 
@@ -100,26 +100,12 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
                   <div>
                     <Label htmlFor="comment">Comentário</Label>
                     <div className="mt-2">
-                      <Editor
-                        apiKey={null} // Não é necessário para desenvolvimento local
+                      <Textarea
+                        id="comment"
                         value={newComment}
-                        onEditorChange={(content) => {
-                          setNewComment(content);
-                        }}
-                        init={{
-                          height: 300,
-                          menubar: false,
-                          plugins: [
-                            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-                          ],
-                          toolbar: 'undo redo | blocks | ' +
-                            'bold italic forecolor | alignleft aligncenter ' +
-                            'alignright alignjustify | bullist numlist outdent indent | ' +
-                            'removeformat | help',
-                          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-                        }}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        rows={6}
+                        placeholder="Digite seu comentário aqui..."
                       />
                     </div>
                   </div>
