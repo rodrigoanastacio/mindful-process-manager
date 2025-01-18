@@ -15,7 +15,10 @@ interface ProcessHistoryProps {
   contactNumber?: string;
 }
 
-export const ProcessHistory = ({ entries, contactNumber }: ProcessHistoryProps) => {
+export const ProcessHistory = ({
+  entries,
+  contactNumber,
+}: ProcessHistoryProps) => {
   const getIcon = (type: HistoryEntry["type"]) => {
     switch (type) {
       case "comment":
@@ -31,20 +34,23 @@ export const ProcessHistory = ({ entries, contactNumber }: ProcessHistoryProps) 
     const message = `
 *Atualização no Status do Processo*
 
-Olá!
+Olá ${entry.user}!
 
 Uma nova atualização foi registrada no processo.
 
 *Detalhes da Atualização:*
-📋 *Tipo*: ${entry.type === 'comment' ? 'Comentário' : entry.type === 'status' ? 'Mudança de Status' : 'Documento'}
-👤 *Responsável*: ${entry.user}
-📅 *Data*: ${entry.date}
-📝 *Descrição*: ${entry.description}
+*Tipo*: ${
+      entry.type === "comment"
+        ? "Comentário"
+        : entry.type === "status"
+        ? "Mudança de Status"
+        : "Documento"
+    }
+*Responsável*: ${entry.user}
+*Data*: ${entry.date}
+*Descrição*: ${entry.description}
 
-_Esta é uma mensagem automática do sistema de gestão de processos._
-_Por favor, não responda diretamente a esta mensagem._
-
-📞 Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
+Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
 
 Atenciosamente,
 Equipe de Gerenciamento de Processos
@@ -57,19 +63,16 @@ Equipe de Gerenciamento de Processos
     if (!contactNumber) {
       return;
     }
-    const formattedNumber = contactNumber.replace(/\D/g, '');
+    const formattedNumber = contactNumber.replace(/\D/g, "");
     const text = encodeURIComponent(formatWhatsAppMessage(entry));
-    window.open(`https://wa.me/${formattedNumber}?text=${text}`, '_blank');
+    window.open(`https://wa.me/${formattedNumber}?text=${text}`, "_blank");
   };
 
   return (
     <ScrollArea className="h-[600px] rounded-md border p-4">
       <div className="space-y-4">
         {entries.map((entry) => (
-          <div
-            key={entry.id}
-            className="flex gap-4 p-4 rounded-lg bg-gray-50"
-          >
+          <div key={entry.id} className="flex gap-4 p-4 rounded-lg bg-gray-50">
             <div className="mt-1">{getIcon(entry.type)}</div>
             <div className="flex-1">
               <div className="flex justify-between items-start mb-1">
@@ -89,7 +92,7 @@ Equipe de Gerenciamento de Processos
                   <span className="text-sm text-gray-500">{entry.date}</span>
                 </div>
               </div>
-              <div 
+              <div
                 className="text-sm text-gray-600 prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{ __html: entry.description }}
               />
