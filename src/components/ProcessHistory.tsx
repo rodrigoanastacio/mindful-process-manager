@@ -27,12 +27,30 @@ export const ProcessHistory = ({ entries, contactNumber }: ProcessHistoryProps) 
     }
   };
 
-  const handleWhatsAppShare = (description: string) => {
+  const formatWhatsAppMessage = (entry: HistoryEntry) => {
+    const message = `
+🔔 *Atualização do Processo*
+
+📝 *Mensagem*: ${entry.description}
+
+👤 *Responsável*: ${entry.user}
+📅 *Data*: ${entry.date}
+
+_Esta é uma mensagem automática do sistema de gestão de processos._
+_Por favor, não responda diretamente a esta mensagem._
+
+📞 Para mais informações, entre em contato conosco.
+    `.trim();
+
+    return message;
+  };
+
+  const handleWhatsAppShare = (entry: HistoryEntry) => {
     if (!contactNumber) {
       return;
     }
     const formattedNumber = contactNumber.replace(/\D/g, '');
-    const text = encodeURIComponent(description);
+    const text = encodeURIComponent(formatWhatsAppMessage(entry));
     window.open(`https://wa.me/${formattedNumber}?text=${text}`, '_blank');
   };
 
@@ -53,7 +71,7 @@ export const ProcessHistory = ({ entries, contactNumber }: ProcessHistoryProps) 
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleWhatsAppShare(entry.description)}
+                      onClick={() => handleWhatsAppShare(entry)}
                       className="text-green-600 hover:text-green-700"
                     >
                       <Send className="h-4 w-4 mr-1" />
