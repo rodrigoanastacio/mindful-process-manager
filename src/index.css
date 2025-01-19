@@ -31,7 +31,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
   }
 }
@@ -58,4 +58,17 @@
 
 .status-archived {
   @apply bg-gray-100 text-gray-800;
+}
+
+/* Sidebar customizations */
+[data-sidebar="sidebar"] {
+  @apply bg-white border-r border-gray-200;
+}
+
+[data-sidebar="menu-button"] {
+  @apply text-gray-600 hover:text-gray-900;
+}
+
+[data-sidebar="group-label"] {
+  @apply text-gray-500 uppercase tracking-wider text-xs font-medium;
 }
