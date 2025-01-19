@@ -10,10 +10,10 @@ import {
 
 interface ProcessFilterProps {
   onSearch: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onStatusFilter: (value: string) => void;
 }
 
-export const ProcessFilter = ({ onSearch, onStatusChange }: ProcessFilterProps) => {
+export const ProcessFilter = ({ onSearch, onStatusFilter }: ProcessFilterProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <div className="relative flex-1">
@@ -24,7 +24,7 @@ export const ProcessFilter = ({ onSearch, onStatusChange }: ProcessFilterProps) 
           onChange={(e) => onSearch(e.target.value)}
         />
       </div>
-      <Select onValueChange={onStatusChange}>
+      <Select onValueChange={onStatusFilter}>
         <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
