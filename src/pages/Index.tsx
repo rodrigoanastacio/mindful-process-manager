@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { ProcessStats } from "@/components/ProcessStats";
 import { ProcessFilter } from "@/components/ProcessFilter";
-import { ProcessCard } from "@/components/ProcessCard";
-import { ProcessHistory } from "@/components/ProcessHistory";
-import { AdvancedFilter } from "@/components/AdvancedFilter";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Filter } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { CreateProcessModal } from "@/components/CreateProcessModal";
+import { Link } from "react-router-dom";
 
 const mockProcesses = [
   {
@@ -48,30 +46,6 @@ const mockProcesses = [
   },
 ];
 
-const mockHistory = [
-  {
-    id: "1",
-    type: "status" as const,
-    user: "Maria Silva",
-    date: "15/03/2024 14:30",
-    description: "Status alterado para 'Em Andamento'",
-  },
-  {
-    id: "2",
-    type: "document" as const,
-    user: "João Santos",
-    date: "14/03/2024 10:15",
-    description: "Documento anexado: Relatório Técnico",
-  },
-  {
-    id: "3",
-    type: "comment" as const,
-    user: "Ana Oliveira",
-    date: "13/03/2024 16:45",
-    description: "Comentário adicionado: Necessário revisão da documentação",
-  },
-];
-
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -88,49 +62,17 @@ const Index = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handleArchive = (id: string) => {
-    toast({
-      title: "Processo Arquivado",
-      description: `Processo ${id} foi arquivado com sucesso.`,
-    });
-  };
-
-  const handleDelete = (id: string) => {
-    toast({
-      title: "Processo Excluído",
-      description: `Processo ${id} foi excluído com sucesso.`,
-      variant: "destructive",
-    });
-  };
-
-  const handleExport = (id: string) => {
-    toast({
-      title: "Exportando Processo",
-      description: `Processo ${id} está sendo exportado.`,
-    });
-  };
-
-  const handleAdvancedFilter = (filters: any) => {
-    console.log("Filtros aplicados:", filters);
-    toast({
-      title: "Filtros Aplicados",
-      description: "Os filtros foram aplicados com sucesso.",
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Gestão de Processos</h1>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
-            >
-              <Filter className="mr-2 h-4 w-4" />
-              Filtros Avançados
-            </Button>
+            <Link to="/table">
+              <Button variant="outline">
+                Visualizar em Tabela
+              </Button>
+            </Link>
             <Button 
               className="bg-primary hover:bg-primary/90"
               onClick={() => setIsCreateModalOpen(true)}
@@ -143,31 +85,44 @@ const Index = () => {
 
         <ProcessStats />
 
-        {showAdvancedFilter && (
-          <AdvancedFilter
-            onFilter={handleAdvancedFilter}
-            onClear={() => {
-              setSearchTerm("");
-              setStatusFilter("all");
-            }}
-          />
-        )}
-
         <div className="space-y-6">
           <ProcessFilter
             onSearch={setSearchTerm}
-            onStatusChange={setStatusFilter}
+            onStatusFilter={setStatusFilter}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {filteredProcesses.map((process) => (
-              <ProcessCard
-                key={process.id}
-                {...process}
-                onArchive={() => handleArchive(process.id)}
-                onDelete={() => handleDelete(process.id)}
-                onExport={() => handleExport(process.id)}
-              />
+              <Link 
+                key={process.id} 
+                to={`/table?id=${process.id}`}
+                className="block hover:no-underline"
+              >
+                <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="font-semibold text-lg">{process.title}</h3>
+                      <p className="text-sm text-gray-500">#{process.protocol}</p>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-sm ${
+                      process.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                      process.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {process.status === 'active' ? 'Em Andamento' :
+                       process.status === 'completed' ? 'Concluído' :
+                       'Pendente'}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {process.description}
+                  </p>
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <span>Responsável: {process.assignee}</span>
+                    <span>Prazo: {process.deadline}</span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
 
@@ -177,8 +132,6 @@ const Index = () => {
             </div>
           )}
         </div>
-
-        <ProcessHistory entries={mockHistory} />
       </div>
 
       <CreateProcessModal 
