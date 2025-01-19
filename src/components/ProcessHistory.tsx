@@ -34,21 +34,21 @@ export const ProcessHistory = ({
     const message = `
 *Atualização no Status do Processo*
 
-Olá ${entry.user}!
+Olá!
 
 Uma nova atualização foi registrada no processo.
 
 *Detalhes da Atualização:*
-*Tipo*: ${
+📋 *Tipo*: ${
       entry.type === "comment"
         ? "Comentário"
         : entry.type === "status"
         ? "Mudança de Status"
         : "Documento"
     }
-*Responsável*: ${entry.user}
-*Data*: ${entry.date}
-*Descrição*: ${entry.description}
+👤 *Responsável*: ${entry.user}
+📅 *Data*: ${entry.date}
+📝 *Descrição*: ${entry.description}
 
 Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
 
@@ -65,7 +65,8 @@ Equipe de Gerenciamento de Processos
     }
     const formattedNumber = contactNumber.replace(/\D/g, "");
     const text = encodeURIComponent(formatWhatsAppMessage(entry));
-    window.open(`https://wa.me/${formattedNumber}?text=${text}`, "_blank");
+    const whatsappUrl = `https://wa.me/${formattedNumber}?text=${text}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
