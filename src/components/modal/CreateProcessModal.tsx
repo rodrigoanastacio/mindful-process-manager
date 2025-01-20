@@ -41,33 +41,37 @@ export const CreateProcessModal = ({
             <form onSubmit={handleSubmit} className="space-y-8">
               {step === 1 && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="space-y-4">
+                  <div className="space-y-4 ">
                     <Label htmlFor="title">Process Title</Label>
-                    <Input
-                      id="title"
-                      placeholder="Enter process title"
-                      className="text-lg  text-slate-400"
-                      required
-                    />
+                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                      <Input
+                        id="title"
+                        placeholder="Enter process title"
+                        className="text-lg rounded"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-4">
                     <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Provide a detailed description of the process"
-                      className="min-h-[120px]"
-                      required
-                    />
+                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                      <Textarea
+                        id="description"
+                        placeholder="Provide a detailed description of the process"
+                        className="min-h-[120px] rounded"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-4">
                     <Label>Process Type</Label>
                     <RadioGroup
                       defaultValue="administrative"
-                      className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                      className="grid grid-cols-1 md:grid-cols-3 gap-4 "
                     >
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem
                           value="administrative"
                           id="administrative"
@@ -80,7 +84,8 @@ export const CreateProcessModal = ({
                           Administrative
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+
+                      <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="legal" id="legal" />
                         <Label
                           htmlFor="legal"
@@ -90,7 +95,8 @@ export const CreateProcessModal = ({
                           Legal
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+
+                      <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="hr" id="hr" />
                         <Label htmlFor="hr" className="flex items-center gap-2">
                           <Users className="h-4 w-4" />
@@ -107,8 +113,13 @@ export const CreateProcessModal = ({
                   <div className="space-y-4">
                     <Label>Deadline</Label>
                     <div className="flex items-center gap-4">
-                      <Input type="date" className="flex-1" required />
-                      <Input type="time" className="flex-1" required />
+                      <div className="flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                        <Input type="date" className="rounded" required />
+                      </div>
+
+                      <div className="flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                        <Input type="time" className="rounded" required />
+                      </div>
                     </div>
                   </div>
 
@@ -118,15 +129,15 @@ export const CreateProcessModal = ({
                       defaultValue="medium"
                       className="grid grid-cols-1 md:grid-cols-3 gap-4"
                     >
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="low" id="low" />
                         <Label htmlFor="low">Low</Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="medium" id="medium" />
                         <Label htmlFor="medium">Medium</Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="high" id="high" />
                         <Label htmlFor="high">High</Label>
                       </div>
@@ -135,21 +146,26 @@ export const CreateProcessModal = ({
 
                   <div className="space-y-4">
                     <Label htmlFor="assignee">Assignee</Label>
-                    <Input
-                      id="assignee"
-                      placeholder="Enter assignee name or email"
-                      required
-                    />
+                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                      <Input
+                        id="assignee"
+                        className="rounded"
+                        placeholder="Enter assignee name or email"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-4">
                     <Label htmlFor="attachments">Attachments</Label>
-                    <Input
-                      id="attachments"
-                      type="file"
-                      multiple
-                      className="cursor-pointer"
-                    />
+                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                      <Input
+                        id="attachments"
+                        type="file"
+                        multiple
+                        className="cursor-pointer rounded"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -167,10 +183,21 @@ export const CreateProcessModal = ({
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setStep(2)}>Next</Button>
+              <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                <Button
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                  className="rounded"
+                >
+                  Cancelar
+                </Button>
+              </div>
+
+              <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                <Button className="rounded" onClick={() => setStep(2)}>
+                  Próximo
+                </Button>
+              </div>
             </>
           )}
         </div>
