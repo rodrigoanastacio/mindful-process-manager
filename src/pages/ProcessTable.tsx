@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Eye, Edit, Trash, Plus } from "lucide-react";
@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 import { ProcessFilter } from "@/components/ProcessFilter";
@@ -75,6 +76,16 @@ export const ProcessTable = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editProcessId, setEditProcessId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [processes, setProcesses] = useState([]);
+
+  useEffect(() => {
+    // Simulate loading data
+    setTimeout(() => {
+      setProcesses(mockProcesses);
+      setIsLoading(false);
+    }, 2000);
+  }, []);
 
   const filteredProcesses = mockProcesses.filter((process) => {
     const matchesSearch =
@@ -137,48 +148,74 @@ export const ProcessTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProcesses.map((process) => (
-                <TableRow key={process.id}>
-                  <TableCell className="font-medium">
-                    {process.protocol}
-                  </TableCell>
-                  <TableCell>{process.title}</TableCell>
-                  <TableCell>
-                    <ProcessStatus status={process.status} />
-                  </TableCell>
-                  <TableCell>
-                    <ProcessPriority priority={process.priority} />
-                  </TableCell>
-                  <TableCell>{process.assignee}</TableCell>
-                  <TableCell>{process.deadline}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleView(process)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleEdit(process.id)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDelete(process.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading
+                ? Array.from({ length: 3 }).map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 bg-gray-200 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-48 bg-gray-200 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-20 bg-gray-200 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16 bg-gray-200 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 bg-gray-200 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-20 bg-gray-200 rounded-full" />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Skeleton className="h-8 w-8 bg-gray-200 rounded-full" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : filteredProcesses.map((process) => (
+                    <TableRow key={process.id}>
+                      <TableCell className="font-medium">
+                        {process.protocol}
+                      </TableCell>
+                      <TableCell>{process.title}</TableCell>
+                      <TableCell>
+                        <ProcessStatus status={process.status} />
+                      </TableCell>
+                      <TableCell>
+                        <ProcessPriority priority={process.priority} />
+                      </TableCell>
+                      <TableCell>{process.assignee}</TableCell>
+                      <TableCell>{process.deadline}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleView(process)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleEdit(process.id)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDelete(process.id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </div>
