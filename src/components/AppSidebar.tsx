@@ -40,11 +40,6 @@ const gerenciarItems = [
     url: "/parceiros-juridico",
   },
   {
-    title: "Grupos",
-    icon: FolderKanban,
-    url: "/groups",
-  },
-  {
     title: "Departamentos",
     icon: Building2,
     url: "/departments",
