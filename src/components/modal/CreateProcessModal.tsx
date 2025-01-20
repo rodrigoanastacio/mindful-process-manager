@@ -28,7 +28,7 @@ export const CreateProcessModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0  bg-gray-50">
+      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0 bg-gray-50">
         <div className="container mx-auto p-6">
           <h2 className="text-2xl font-semibold">Create New Process</h2>
           <p className="text-sm text-gray-500 mt-1">
