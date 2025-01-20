@@ -104,18 +104,20 @@ const Members = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
       <div className="max-w-5xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold">Gerenciar Membros</h1>
+        <h1 className="text-3xl font-bold">Gerenciar Advogados Parceiro</h1>
 
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Adicionar Novo Membro</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Adicionar Novo Advogado
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="newMemberName">Nome</Label>
               <Input
                 id="newMemberName"
-                placeholder="Nome do membro"
+                placeholder="Nome"
                 value={newMemberName}
                 onChange={(e) => setNewMemberName(e.target.value)}
               />
@@ -125,7 +127,7 @@ const Members = () => {
               <Input
                 id="newMemberEmail"
                 type="email"
-                placeholder="Email do membro"
+                placeholder="Email"
                 value={newMemberEmail}
                 onChange={(e) => setNewMemberEmail(e.target.value)}
               />

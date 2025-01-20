@@ -35,9 +35,9 @@ const menuItems = [
 
 const gerenciarItems = [
   {
-    title: "Membros",
+    title: "Advogado Parceiro",
     icon: Users,
-    url: "/members",
+    url: "/parceiros-juridico",
   },
   {
     title: "Grupos",

@@ -7,7 +7,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "@/pages/Index";
 import { ProcessTable } from "@/pages/ProcessTable";
-import Members from "@/pages/Members";
+import LegalPartner from "@/pages/LegalPartner";
 import Departments from "@/pages/Departments";
 
 const queryClient = new QueryClient();
@@ -29,7 +29,10 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/processos" element={<ProcessTable />} />
-                  <Route path="/members" element={<Members />} />
+                  <Route
+                    path="/parceiros-juridico"
+                    element={<LegalPartner />}
+                  />
                   <Route path="/departments" element={<Departments />} />
                 </Routes>
               </div>
