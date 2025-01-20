@@ -170,7 +170,11 @@ export const ProcessTable = () => {
                         <Skeleton className="h-4 w-20 bg-gray-200 rounded-full" />
                       </TableCell>
                       <TableCell className="text-right">
-                        <Skeleton className="h-8 w-8 bg-gray-200 rounded-full" />
+                        <div className="flex justify-end gap-2">
+                          <Skeleton className="h-8 w-8 bg-gray-200 rounded" />
+                          <Skeleton className="h-8 w-8 bg-gray-200 rounded" />
+                          <Skeleton className="h-8 w-8 bg-gray-200 rounded" />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
