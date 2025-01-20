@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+
 import { Trash, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
+
+import { CreateLegalPartnerModal } from "@/components/modal/CreateLegalPartnerModal";
 
 const mockMembers = [
   {
@@ -27,15 +27,14 @@ const mockMembers = [
   },
 ];
 
-const Members = () => {
+export const LegalPartner = () => {
   const [members, setMembers] = useState(mockMembers);
-  const [newMemberName, setNewMemberName] = useState("");
-  const [newMemberEmail, setNewMemberEmail] = useState("");
-  const [newMemberDepartment, setNewMemberDepartment] = useState("");
+
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const [editMemberName, setEditMemberName] = useState("");
   const [editMemberEmail, setEditMemberEmail] = useState("");
   const [editMemberDepartment, setEditMemberDepartment] = useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const handleAddMember = () => {
     if (
@@ -105,51 +104,21 @@ const Members = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold">Gerenciar Advogados Parceiro</h1>
-
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Adicionar Novo Advogado
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="newMemberName">Nome</Label>
-              <Input
-                id="newMemberName"
-                placeholder="Nome"
-                value={newMemberName}
-                onChange={(e) => setNewMemberName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newMemberEmail">Email</Label>
-              <Input
-                id="newMemberEmail"
-                type="email"
-                placeholder="Email"
-                value={newMemberEmail}
-                onChange={(e) => setNewMemberEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newMemberDepartment">Departamento</Label>
-              <Input
-                id="newMemberDepartment"
-                placeholder="Departamento do membro"
-                value={newMemberDepartment}
-                onChange={(e) => setNewMemberDepartment(e.target.value)}
-              />
-            </div>
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="flex center justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Gerenciar Advogados</h1>
+            <p className="text-gray-500 mt-1">Listagem de processos</p>
           </div>
           <Button
-            onClick={handleAddMember}
-            className="mt-4 bg-primary hover:bg-primary/90"
+            // onClick={handleAddMember}
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-primary hover:bg-primary/90"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Adicionar Membro
+            Adicionar Advogado
           </Button>
-        </Card>
+        </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Lista de Membros</h2>
@@ -237,8 +206,11 @@ const Members = () => {
           </Card>
         )}
       </div>
+
+      <CreateLegalPartnerModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+      />
     </div>
   );
 };
-
-export default Members;
