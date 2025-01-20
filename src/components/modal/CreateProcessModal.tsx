@@ -28,7 +28,7 @@ export const CreateProcessModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0  bg-gray-50">
+      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0 bg-gray-50">
         <div className="container mx-auto p-6">
           <h2 className="text-2xl font-semibold">Create New Process</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -46,7 +46,7 @@ export const CreateProcessModal = ({
                     <Input
                       id="title"
                       placeholder="Enter process title"
-                      className="text-lg  text-slate-400"
+                      className="text-lg text-slate-400 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                       required
                     />
                   </div>
@@ -56,7 +56,7 @@ export const CreateProcessModal = ({
                     <Textarea
                       id="description"
                       placeholder="Provide a detailed description of the process"
-                      className="min-h-[120px]"
+                      className="min-h-[120px] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                       required
                     />
                   </div>
@@ -67,7 +67,7 @@ export const CreateProcessModal = ({
                       defaultValue="administrative"
                       className="grid grid-cols-1 md:grid-cols-3 gap-4"
                     >
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded-lg p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem
                           value="administrative"
                           id="administrative"
@@ -80,7 +80,7 @@ export const CreateProcessModal = ({
                           Administrative
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded-lg p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="legal" id="legal" />
                         <Label
                           htmlFor="legal"
@@ -90,7 +90,7 @@ export const CreateProcessModal = ({
                           Legal
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded-lg p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="hr" id="hr" />
                         <Label htmlFor="hr" className="flex items-center gap-2">
                           <Users className="h-4 w-4" />
@@ -107,8 +107,16 @@ export const CreateProcessModal = ({
                   <div className="space-y-4">
                     <Label>Deadline</Label>
                     <div className="flex items-center gap-4">
-                      <Input type="date" className="flex-1" required />
-                      <Input type="time" className="flex-1" required />
+                      <Input 
+                        type="date" 
+                        className="flex-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" 
+                        required 
+                      />
+                      <Input 
+                        type="time" 
+                        className="flex-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" 
+                        required 
+                      />
                     </div>
                   </div>
 
@@ -118,15 +126,15 @@ export const CreateProcessModal = ({
                       defaultValue="medium"
                       className="grid grid-cols-1 md:grid-cols-3 gap-4"
                     >
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded-lg p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="low" id="low" />
                         <Label htmlFor="low">Low</Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded-lg p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="medium" id="medium" />
                         <Label htmlFor="medium">Medium</Label>
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
+                      <div className="flex items-center space-x-2 border rounded-lg p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
                         <RadioGroupItem value="high" id="high" />
                         <Label htmlFor="high">High</Label>
                       </div>
@@ -138,6 +146,7 @@ export const CreateProcessModal = ({
                     <Input
                       id="assignee"
                       placeholder="Enter assignee name or email"
+                      className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                       required
                     />
                   </div>
@@ -148,7 +157,7 @@ export const CreateProcessModal = ({
                       id="attachments"
                       type="file"
                       multiple
-                      className="cursor-pointer"
+                      className="cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     />
                   </div>
                 </div>
