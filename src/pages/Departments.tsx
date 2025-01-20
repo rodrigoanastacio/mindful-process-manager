@@ -61,7 +61,7 @@ const Departments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
       <div className="max-w-5xl mx-auto space-y-8">
         <h1 className="text-3xl font-bold">Gerenciar Departamentos</h1>
 
