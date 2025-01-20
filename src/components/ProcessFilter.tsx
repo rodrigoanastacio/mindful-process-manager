@@ -13,7 +13,10 @@ interface ProcessFilterProps {
   onStatusFilter: (value: string) => void;
 }
 
-export const ProcessFilter = ({ onSearch, onStatusFilter }: ProcessFilterProps) => {
+export const ProcessFilter = ({
+  onSearch,
+  onStatusFilter,
+}: ProcessFilterProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 w-full">
       <div className="relative flex-1">
@@ -28,12 +31,22 @@ export const ProcessFilter = ({ onSearch, onStatusFilter }: ProcessFilterProps) 
         <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos os Status</SelectItem>
-          <SelectItem value="pending">Pendente</SelectItem>
-          <SelectItem value="active">Em Andamento</SelectItem>
-          <SelectItem value="completed">Concluído</SelectItem>
-          <SelectItem value="archived">Arquivado</SelectItem>
+        <SelectContent className="bg-white shadow-lg rounded-lg">
+          <SelectItem className="cursor-pointer" value="all">
+            Todos os Status
+          </SelectItem>
+          <SelectItem className="cursor-pointer" value="pending">
+            Pendente
+          </SelectItem>
+          <SelectItem className="cursor-pointer" value="active">
+            Em Andamento
+          </SelectItem>
+          <SelectItem className="cursor-pointer" value="completed">
+            Concluído
+          </SelectItem>
+          <SelectItem className="cursor-pointer" value="archived">
+            Arquivado
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
