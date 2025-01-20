@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { Eye, Edit, Trash, Plus } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   Table,
@@ -21,54 +21,11 @@ import { ProcessPriority } from "@/components/process/ProcessPriority";
 import { CreateProcessModal } from "@/components/modal/CreateProcessModal";
 import { ProcessDetailsModal } from "@/components/modal/ProcessDetailsModal";
 import { EditProcessModal } from "@/components/modal/EditProcessModal";
-
-const mockProcesses = [
-  {
-    id: "PRO001",
-    protocol: "2024/001.123-4",
-    title: "Processo de Licenciamento Ambiental",
-    description:
-      "Solicitação de licença ambiental para novo projeto de construção na área central.",
-    status: "active" as const,
-    date: "15/03/2024",
-    deadline: "15/04/2024",
-    assignee: "Maria Silva",
-    department: "Meio Ambiente",
-    priority: "high" as const,
-    contactNumber: "11978943410",
-  },
-  {
-    id: "PRO002",
-    protocol: "2024/001.124-5",
-    title: "Alvará de Construção",
-    description:
-      "Solicitação de alvará para construção de complexo residencial.",
-    status: "pending" as const,
-    date: "14/03/2024",
-    deadline: "14/04/2024",
-    assignee: "João Santos",
-    department: "Obras",
-    priority: "medium" as const,
-    contactNumber: "11978943410",
-  },
-  {
-    id: "PRO003",
-    protocol: "2024/001.125-6",
-    title: "Alteração de Zoneamento",
-    description:
-      "Solicitação de mudança de zoneamento para propriedade comercial.",
-    status: "completed" as const,
-    date: "10/03/2024",
-    deadline: "10/04/2024",
-    assignee: "Ana Oliveira",
-    department: "Urbanismo",
-    priority: "low" as const,
-    contactNumber: "11978943410",
-  },
-];
+import { processService } from "@/services/supabaseService";
 
 export const ProcessTable = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -76,28 +33,35 @@ export const ProcessTable = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editProcessId, setEditProcessId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [processes, setProcesses] = useState([]);
 
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setProcesses(mockProcesses);
-      setIsLoading(false);
-    }, 2000);
-  }, []);
+  const { data: processes, isLoading } = useQuery({
+    queryKey: ['processes'],
+    queryFn: processService.getAll
+  });
 
-  const filteredProcesses = mockProcesses.filter((process) => {
+  const deleteMutation = useMutation({
+    mutationFn: processService.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['processes'] });
+      toast.success("Processo excluído com sucesso!");
+    },
+    onError: (error) => {
+      toast.error("Erro ao excluir processo");
+      console.error('Error deleting process:', error);
+    }
+  });
+
+  const filteredProcesses = processes?.filter((process) => {
     const matchesSearch =
-      process.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      process.protocol.toLowerCase().includes(searchTerm.toLowerCase());
+      process.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      process.numero_processo.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" || process.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const handleDelete = (id: string) => {
-    toast.success(`Processo ${id} excluído com sucesso!`);
+    deleteMutation.mutate(id);
   };
 
   const handleView = (process: any) => {
@@ -143,7 +107,7 @@ export const ProcessTable = () => {
                 <TableHead>Status</TableHead>
                 <TableHead>Prioridade</TableHead>
                 <TableHead>Responsável</TableHead>
-                <TableHead>Prazo</TableHead>
+                <TableHead>Departamento</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -178,20 +142,20 @@ export const ProcessTable = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                : filteredProcesses.map((process) => (
+                : filteredProcesses?.map((process) => (
                     <TableRow key={process.id}>
                       <TableCell className="font-medium">
-                        {process.protocol}
+                        {process.numero_processo}
                       </TableCell>
-                      <TableCell>{process.title}</TableCell>
+                      <TableCell>{process.titulo}</TableCell>
                       <TableCell>
                         <ProcessStatus status={process.status} />
                       </TableCell>
                       <TableCell>
-                        <ProcessPriority priority={process.priority} />
+                        <ProcessPriority priority={process.prioridade} />
                       </TableCell>
-                      <TableCell>{process.assignee}</TableCell>
-                      <TableCell>{process.deadline}</TableCell>
+                      <TableCell>{process.advogado_responsavel?.nome_completo || '-'}</TableCell>
+                      <TableCell>{process.departamento?.nome || '-'}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button

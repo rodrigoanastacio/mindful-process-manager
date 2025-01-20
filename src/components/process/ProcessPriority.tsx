@@ -1,14 +1,14 @@
 import { Badge } from "@/components/ui/badge";
+import { ProcessPriority as ProcessPriorityType } from "@/types/database";
 
 const priorityConfig = {
-  low: "bg-gray-100 text-gray-800",
-  medium: "bg-blue-100 text-blue-800",
-  high: "bg-orange-100 text-orange-800",
-  urgent: "bg-red-100 text-red-800"
+  baixa: "bg-gray-100 text-gray-800",
+  media: "bg-blue-100 text-blue-800",
+  alta: "bg-red-100 text-red-800"
 };
 
 interface ProcessPriorityProps {
-  priority: keyof typeof priorityConfig;
+  priority: ProcessPriorityType;
 }
 
 export const ProcessPriority = ({ priority }: ProcessPriorityProps) => (

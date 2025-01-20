@@ -9,7 +9,195 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      advogados_parceiros: {
+        Row: {
+          created_at: string
+          email: string
+          especializacao: string | null
+          id: string
+          nome_completo: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          especializacao?: string | null
+          id?: string
+          nome_completo: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          especializacao?: string | null
+          id?: string
+          nome_completo?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      departamentos: {
+        Row: {
+          created_at: string
+          data_criacao: string
+          descricao: string | null
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_criacao?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_criacao?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      logs: {
+        Row: {
+          acao: string
+          created_at: string
+          data_hora: string
+          id: string
+          processo_id: string | null
+          usuario_id: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          data_hora?: string
+          id?: string
+          processo_id?: string | null
+          usuario_id?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          data_hora?: string
+          id?: string
+          processo_id?: string | null
+          usuario_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logs_processo_id_fkey"
+            columns: ["processo_id"]
+            isOneToOne: false
+            referencedRelation: "processos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "logs_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processos: {
+        Row: {
+          advogado_responsavel_id: string | null
+          arquivos_relacionados: string[] | null
+          created_at: string
+          data_criacao: string
+          departamento_id: string | null
+          descricao: string | null
+          id: string
+          numero_processo: string
+          prioridade: Database["public"]["Enums"]["processo_prioridade"]
+          status: Database["public"]["Enums"]["processo_status"]
+          tipo: Database["public"]["Enums"]["processo_tipo"]
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          advogado_responsavel_id?: string | null
+          arquivos_relacionados?: string[] | null
+          created_at?: string
+          data_criacao?: string
+          departamento_id?: string | null
+          descricao?: string | null
+          id?: string
+          numero_processo: string
+          prioridade?: Database["public"]["Enums"]["processo_prioridade"]
+          status?: Database["public"]["Enums"]["processo_status"]
+          tipo: Database["public"]["Enums"]["processo_tipo"]
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          advogado_responsavel_id?: string | null
+          arquivos_relacionados?: string[] | null
+          created_at?: string
+          data_criacao?: string
+          departamento_id?: string | null
+          descricao?: string | null
+          id?: string
+          numero_processo?: string
+          prioridade?: Database["public"]["Enums"]["processo_prioridade"]
+          status?: Database["public"]["Enums"]["processo_status"]
+          tipo?: Database["public"]["Enums"]["processo_tipo"]
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processos_advogado_responsavel_id_fkey"
+            columns: ["advogado_responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "advogados_parceiros"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processos_departamento_id_fkey"
+            columns: ["departamento_id"]
+            isOneToOne: false
+            referencedRelation: "departamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usuarios: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          permissao: Database["public"]["Enums"]["usuario_permissao"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          nome: string
+          permissao?: Database["public"]["Enums"]["usuario_permissao"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          permissao?: Database["public"]["Enums"]["usuario_permissao"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +206,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      processo_prioridade: "alta" | "media" | "baixa"
+      processo_status: "em_andamento" | "concluido" | "arquivado"
+      processo_tipo: "administrativo" | "judicial"
+      usuario_permissao: "administrador" | "usuario_comum"
     }
     CompositeTypes: {
       [_ in never]: never
