@@ -35,7 +35,7 @@ const menuItems = [
 
 const gerenciarItems = [
   {
-    title: "Advogado Parceiro",
+    title: "Advogados",
     icon: Users,
     url: "/parceiros-juridico",
   },
