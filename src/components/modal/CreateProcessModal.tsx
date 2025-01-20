@@ -13,7 +13,10 @@ interface CreateProcessModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const CreateProcessModal = ({ open, onOpenChange }: CreateProcessModalProps) => {
+export const CreateProcessModal = ({
+  open,
+  onOpenChange,
+}: CreateProcessModalProps) => {
   const [step, setStep] = useState(1);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,13 +28,15 @@ export const CreateProcessModal = ({ open, onOpenChange }: CreateProcessModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0">
-        <div className="p-6 bg-primary/5 border-b">
+      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0  bg-gray-50">
+        <div className="container mx-auto p-6">
           <h2 className="text-2xl font-semibold">Create New Process</h2>
-          <p className="text-sm text-gray-500 mt-1">Fill in the process details below</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Fill in the process details below
+          </p>
         </div>
 
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-6 bg-gray-50">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="space-y-8">
               {step === 1 && (
@@ -41,7 +46,7 @@ export const CreateProcessModal = ({ open, onOpenChange }: CreateProcessModalPro
                     <Input
                       id="title"
                       placeholder="Enter process title"
-                      className="text-lg"
+                      className="text-lg  text-slate-400"
                       required
                     />
                   </div>
@@ -58,17 +63,29 @@ export const CreateProcessModal = ({ open, onOpenChange }: CreateProcessModalPro
 
                   <div className="space-y-4">
                     <Label>Process Type</Label>
-                    <RadioGroup defaultValue="administrative" className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <RadioGroup
+                      defaultValue="administrative"
+                      className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                    >
                       <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem value="administrative" id="administrative" />
-                        <Label htmlFor="administrative" className="flex items-center gap-2">
+                        <RadioGroupItem
+                          value="administrative"
+                          id="administrative"
+                        />
+                        <Label
+                          htmlFor="administrative"
+                          className="flex items-center gap-2"
+                        >
                           <FileText className="h-4 w-4" />
                           Administrative
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2 border rounded-lg p-4">
                         <RadioGroupItem value="legal" id="legal" />
-                        <Label htmlFor="legal" className="flex items-center gap-2">
+                        <Label
+                          htmlFor="legal"
+                          className="flex items-center gap-2"
+                        >
                           <Building2 className="h-4 w-4" />
                           Legal
                         </Label>
@@ -97,7 +114,10 @@ export const CreateProcessModal = ({ open, onOpenChange }: CreateProcessModalPro
 
                   <div className="space-y-4">
                     <Label>Priority Level</Label>
-                    <RadioGroup defaultValue="medium" className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <RadioGroup
+                      defaultValue="medium"
+                      className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                    >
                       <div className="flex items-center space-x-2 border rounded-lg p-4">
                         <RadioGroupItem value="low" id="low" />
                         <Label htmlFor="low">Low</Label>
@@ -140,27 +160,17 @@ export const CreateProcessModal = ({ open, onOpenChange }: CreateProcessModalPro
         <div className="p-6 bg-gray-50 border-t flex justify-between items-center">
           {step === 2 ? (
             <>
-              <Button
-                variant="outline"
-                onClick={() => setStep(1)}
-              >
+              <Button variant="outline" onClick={() => setStep(1)}>
                 Previous
               </Button>
-              <Button onClick={handleSubmit}>
-                Create Process
-              </Button>
+              <Button onClick={handleSubmit}>Create Process</Button>
             </>
           ) : (
             <>
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setStep(2)}>
-                Next
-              </Button>
+              <Button onClick={() => setStep(2)}>Next</Button>
             </>
           )}
         </div>

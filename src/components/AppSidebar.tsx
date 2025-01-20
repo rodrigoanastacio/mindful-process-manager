@@ -29,7 +29,7 @@ const menuItems = [
   {
     title: "Processos",
     icon: FileText,
-    url: "/table",
+    url: "/processos",
   },
 ];
 

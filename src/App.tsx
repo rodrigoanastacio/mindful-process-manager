@@ -5,8 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import Index from "./pages/Index";
-import ProcessTable from "./pages/ProcessTable";
+import Index from "@/pages/Index";
+import { ProcessTable } from "@/pages/ProcessTable";
+import Members from "@/pages/Members";
+import Departments from "@/pages/Departments";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +28,9 @@ const App = () => (
                 </div>
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/table" element={<ProcessTable />} />
+                  <Route path="/processos" element={<ProcessTable />} />
+                  <Route path="/members" element={<Members />} />
+                  <Route path="/departments" element={<Departments />} />
                 </Routes>
               </div>
             </main>

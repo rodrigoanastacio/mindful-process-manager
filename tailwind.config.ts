@@ -69,6 +69,14 @@ export default {
             opacity: "1",
           },
         },
+        "fade-out": {
+          "100%": {
+            opacity: "1",
+          },
+          "0%": {
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s ease-out",

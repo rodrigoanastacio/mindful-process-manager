@@ -1,16 +1,15 @@
+import { useState } from "react";
+
+import { CalendarDays, User, Plus } from "lucide-react";
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ProcessHistory } from "./ProcessHistory";
-import { Badge } from "./ui/badge";
-import { Textarea } from "./ui/textarea";
-import { 
-  CalendarDays, 
-  User, 
-  Plus
-} from "lucide-react";
+
+import { ProcessHistory } from "@/components/ProcessHistory";
 
 interface ProcessDetailsModalProps {
   open: boolean;
@@ -30,7 +29,11 @@ interface ProcessDetailsModalProps {
   };
 }
 
-export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDetailsModalProps) => {
+export const ProcessDetailsModal = ({
+  open,
+  onOpenChange,
+  process,
+}: ProcessDetailsModalProps) => {
   const [newComment, setNewComment] = useState("");
   const [history, setHistory] = useState([
     {
@@ -38,8 +41,8 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
       type: "comment" as const,
       user: "Sistema",
       date: new Date().toLocaleDateString(),
-      description: "Processo criado"
-    }
+      description: "Processo criado",
+    },
   ]);
 
   const handleAddComment = (e: React.FormEvent) => {
@@ -51,7 +54,7 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
       type: "comment" as const,
       user: process.assignee,
       date: new Date().toLocaleDateString(),
-      description: newComment
+      description: newComment,
     };
 
     setHistory([newEntry, ...history]);
@@ -63,12 +66,14 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0">
         <DialogTitle className="sr-only">Detalhes do Processo</DialogTitle>
-        
+
         <div className="p-6 bg-primary/5 border-b">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold">{process.title}</h2>
-              <p className="text-sm text-gray-500 mt-1">Protocolo: {process.protocol}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Protocolo: {process.protocol}
+              </p>
             </div>
             <Badge variant="outline">{process.status}</Badge>
           </div>
@@ -78,10 +83,12 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
           <div className="grid md:grid-cols-2 gap-6 p-6">
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-4">Detalhes do Processo</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Detalhes do Processo
+                </h3>
                 <div className="space-y-4">
                   <p className="text-gray-600">{process.description}</p>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2 text-gray-600">
                       <User className="h-4 w-4" />
@@ -96,7 +103,9 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-4">Adicionar Comentário</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Adicionar Comentário
+                </h3>
                 <form onSubmit={handleAddComment} className="space-y-4">
                   <div>
                     <Label htmlFor="comment">Comentário</Label>
@@ -110,7 +119,10 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
+                  <Button
+                    type="submit"
+                    className="w-full bg-green-500 hover:bg-green-600"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Adicionar Comentário
                   </Button>
@@ -119,8 +131,13 @@ export const ProcessDetailsModal = ({ open, onOpenChange, process }: ProcessDeta
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-4">Histórico do Processo</h3>
-              <ProcessHistory entries={history} contactNumber={process.contactNumber} />
+              <h3 className="text-lg font-semibold mb-4">
+                Histórico do Processo
+              </h3>
+              <ProcessHistory
+                entries={history}
+                contactNumber={process.contactNumber}
+              />
             </div>
           </div>
         </div>

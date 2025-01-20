@@ -1,19 +1,23 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
+import { PlusCircle, Filter, List } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+
 import { ProcessStats } from "@/components/ProcessStats";
 import { ProcessFilter } from "@/components/ProcessFilter";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, Filter, List } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { CreateProcessModal } from "@/components/CreateProcessModal";
-import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
+import { CreateProcessModal } from "@/components/modal/CreateProcessModal";
 
 const mockProcesses = [
   {
     id: "PRO001",
     protocol: "2024/001.123-4",
     title: "Processo de Licenciamento Ambiental",
-    description: "Solicitação de licença ambiental para novo projeto de construção na área central.",
+    description:
+      "Solicitação de licença ambiental para novo projeto de construção na área central.",
     status: "active" as const,
     date: "15/03/2024",
     deadline: "15/04/2024",
@@ -27,7 +31,8 @@ const mockProcesses = [
     id: "PRO002",
     protocol: "2024/001.124-5",
     title: "Alvará de Construção",
-    description: "Solicitação de alvará para construção de complexo residencial.",
+    description:
+      "Solicitação de alvará para construção de complexo residencial.",
     status: "pending" as const,
     date: "14/03/2024",
     deadline: "14/04/2024",
@@ -39,7 +44,8 @@ const mockProcesses = [
     id: "PRO003",
     protocol: "2024/001.125-6",
     title: "Alteração de Zoneamento",
-    description: "Solicitação de mudança de zoneamento para propriedade comercial.",
+    description:
+      "Solicitação de mudança de zoneamento para propriedade comercial.",
     status: "completed" as const,
     date: "10/03/2024",
     deadline: "10/04/2024",
@@ -57,7 +63,7 @@ const Index = () => {
   const { toast } = useToast();
 
   const filteredProcesses = mockProcesses.filter((process) => {
-    const matchesSearch = 
+    const matchesSearch =
       process.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       process.protocol.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
@@ -66,7 +72,7 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 animate-fade-in animate-fade-out">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -84,7 +90,7 @@ const Index = () => {
                 Visualizar em Tabela
               </Button>
             </Link>
-            <Button 
+            <Button
               className="bg-primary hover:bg-primary/90 w-full md:w-auto"
               onClick={() => setIsCreateModalOpen(true)}
             >
@@ -114,8 +120,8 @@ const Index = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {filteredProcesses.map((process) => (
-              <Link 
-                key={process.id} 
+              <Link
+                key={process.id}
                 to={`/table?id=${process.id}`}
                 className="block hover:no-underline group"
               >
@@ -125,16 +131,24 @@ const Index = () => {
                       <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                         {process.title}
                       </h3>
-                      <p className="text-sm text-gray-500">#{process.protocol}</p>
+                      <p className="text-sm text-gray-500">
+                        #{process.protocol}
+                      </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      process.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                      process.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {process.status === 'active' ? 'Em Andamento' :
-                       process.status === 'completed' ? 'Concluído' :
-                       'Pendente'}
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        process.status === "active"
+                          ? "bg-blue-100 text-blue-800"
+                          : process.status === "completed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {process.status === "active"
+                        ? "Em Andamento"
+                        : process.status === "completed"
+                        ? "Concluído"
+                        : "Pendente"}
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">
@@ -158,8 +172,8 @@ const Index = () => {
           {filteredProcesses.length === 0 && (
             <div className="text-center py-12 bg-white rounded-lg shadow-sm">
               <p className="text-gray-500">Nenhum processo encontrado</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="mt-4"
                 onClick={() => {
                   setSearchTerm("");
@@ -173,7 +187,7 @@ const Index = () => {
         </div>
       </div>
 
-      <CreateProcessModal 
+      <CreateProcessModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
       />

@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { Eye, Edit, Trash, Plus } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -8,20 +12,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
 import { ProcessFilter } from "@/components/ProcessFilter";
 import { ProcessStatus } from "@/components/process/ProcessStatus";
 import { ProcessPriority } from "@/components/process/ProcessPriority";
-import { Eye, Edit, Trash, Plus } from "lucide-react";
-import { CreateProcessModal } from "@/components/CreateProcessModal";
-import { ProcessDetailsModal } from "@/components/ProcessDetailsModal";
-import { toast } from "sonner";
+import { CreateProcessModal } from "@/components/modal/CreateProcessModal";
+import { ProcessDetailsModal } from "@/components/modal/ProcessDetailsModal";
+import { EditProcessModal } from "@/components/modal/EditProcessModal";
 
 const mockProcesses = [
   {
     id: "PRO001",
     protocol: "2024/001.123-4",
     title: "Processo de Licenciamento Ambiental",
-    description: "Solicitação de licença ambiental para novo projeto de construção na área central.",
+    description:
+      "Solicitação de licença ambiental para novo projeto de construção na área central.",
     status: "active" as const,
     date: "15/03/2024",
     deadline: "15/04/2024",
@@ -34,7 +40,8 @@ const mockProcesses = [
     id: "PRO002",
     protocol: "2024/001.124-5",
     title: "Alvará de Construção",
-    description: "Solicitação de alvará para construção de complexo residencial.",
+    description:
+      "Solicitação de alvará para construção de complexo residencial.",
     status: "pending" as const,
     date: "14/03/2024",
     deadline: "14/04/2024",
@@ -47,7 +54,8 @@ const mockProcesses = [
     id: "PRO003",
     protocol: "2024/001.125-6",
     title: "Alteração de Zoneamento",
-    description: "Solicitação de mudança de zoneamento para propriedade comercial.",
+    description:
+      "Solicitação de mudança de zoneamento para propriedade comercial.",
     status: "completed" as const,
     date: "10/03/2024",
     deadline: "10/04/2024",
@@ -58,18 +66,22 @@ const mockProcesses = [
   },
 ];
 
-const ProcessTable = () => {
+export const ProcessTable = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState<any>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editProcessId, setEditProcessId] = useState<string | null>(null);
 
   const filteredProcesses = mockProcesses.filter((process) => {
     const matchesSearch =
       process.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       process.protocol.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || process.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || process.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -83,21 +95,33 @@ const ProcessTable = () => {
   };
 
   const handleEdit = (id: string) => {
-    toast.info(`Edição do processo ${id} em desenvolvimento`);
+    setEditProcessId(id);
+    setIsEditModalOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Gestão de Processos - Visão em Tabela</h1>
-          <Button onClick={() => setIsCreateModalOpen(true)} className="bg-primary hover:bg-primary/90">
+          <div>
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-900">
+              Processos
+            </h1>
+            <p className="text-gray-500 mt-1">Listagem de processos</p>
+          </div>
+          <Button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-primary hover:bg-primary/90"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Novo Processo
           </Button>
         </div>
 
-        <ProcessFilter onSearch={setSearchTerm} onStatusFilter={setStatusFilter} />
+        <ProcessFilter
+          onSearch={setSearchTerm}
+          onStatusFilter={setStatusFilter}
+        />
 
         <div className="bg-white rounded-lg shadow">
           <Table>
@@ -115,7 +139,9 @@ const ProcessTable = () => {
             <TableBody>
               {filteredProcesses.map((process) => (
                 <TableRow key={process.id}>
-                  <TableCell className="font-medium">{process.protocol}</TableCell>
+                  <TableCell className="font-medium">
+                    {process.protocol}
+                  </TableCell>
                   <TableCell>{process.title}</TableCell>
                   <TableCell>
                     <ProcessStatus status={process.status} />
@@ -169,9 +195,15 @@ const ProcessTable = () => {
             process={selectedProcess}
           />
         )}
+
+        {editProcessId && (
+          <EditProcessModal
+            open={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            processId={editProcessId}
+          />
+        )}
       </div>
     </div>
   );
 };
-
-export default ProcessTable;
