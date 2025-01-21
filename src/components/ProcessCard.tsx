@@ -6,23 +6,24 @@ import { useState } from "react";
 import { ProcessUpdates } from "./ProcessUpdates";
 import { searchProcess } from "@/services/jusbrasilApi";
 import { useToast } from "@/components/ui/use-toast";
-import { ProcessDetailsModal } from "./ProcessDetailsModal";
+import { ProcessDetailsModal } from "@/components/modal/ProcessDetailsModal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProcessStatus } from "./process/ProcessStatus";
 import { ProcessPriority } from "./process/ProcessPriority";
 import { ProcessActions } from "./process/ProcessActions";
+import { ProcessStatus as ProcessStatusType, ProcessPriority as ProcessPriorityType } from "@/types/database";
 
 interface ProcessCardProps {
   id: string;
   protocol: string;
   title: string;
   description: string;
-  status: "pending" | "active" | "completed" | "archived" | "suspended" | "reviewing" | "waiting_docs";
+  status: ProcessStatusType;
   date: string;
   deadline: string;
   assignee: string;
   department: string;
-  priority: "low" | "medium" | "high" | "urgent";
+  priority: ProcessPriorityType;
   contactNumber?: string;
   onArchive?: () => void;
   onDelete?: () => void;
@@ -40,7 +41,7 @@ export const ProcessCard = ({
   assignee,
   department,
   priority,
-  contactNumber = "11978943410", // Número de teste adicionado como padrão
+  contactNumber = "11978943410",
   onArchive,
   onDelete,
   onExport
