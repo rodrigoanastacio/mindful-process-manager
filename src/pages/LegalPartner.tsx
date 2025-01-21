@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 import { Trash, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
-
 import { CreateLegalPartnerModal } from "@/components/modal/CreateLegalPartnerModal";
 
 const mockMembers = [
@@ -29,36 +30,11 @@ const mockMembers = [
 
 export const LegalPartner = () => {
   const [members, setMembers] = useState(mockMembers);
-
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const [editMemberName, setEditMemberName] = useState("");
   const [editMemberEmail, setEditMemberEmail] = useState("");
   const [editMemberDepartment, setEditMemberDepartment] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  const handleAddMember = () => {
-    if (
-      !newMemberName.trim() ||
-      !newMemberEmail.trim() ||
-      !newMemberDepartment.trim()
-    ) {
-      toast.error(
-        "Por favor, preencha todos os campos para adicionar um novo membro."
-      );
-      return;
-    }
-    const newMember = {
-      id: Date.now().toString(),
-      name: newMemberName,
-      email: newMemberEmail,
-      department: newMemberDepartment,
-    };
-    setMembers([...members, newMember]);
-    setNewMemberName("");
-    setNewMemberEmail("");
-    setNewMemberDepartment("");
-    toast.success("Membro adicionado com sucesso!");
-  };
 
   const handleEditMember = (member: any) => {
     setEditMemberId(member.id);
@@ -111,7 +87,6 @@ export const LegalPartner = () => {
             <p className="text-gray-500 mt-1">Listagem de processos</p>
           </div>
           <Button
-            // onClick={handleAddMember}
             onClick={() => setIsCreateModalOpen(true)}
             className="bg-primary hover:bg-primary/90"
           >
