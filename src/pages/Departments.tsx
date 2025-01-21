@@ -29,7 +29,11 @@ const Departments = () => {
         .select('*')
         .order('nome');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching departments:', error);
+        toast.error("Erro ao carregar departamentos");
+        throw error;
+      }
       return data;
     }
   });
@@ -42,7 +46,10 @@ const Departments = () => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating department:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -52,7 +59,7 @@ const Departments = () => {
     },
     onError: (error) => {
       console.error('Erro ao criar departamento:', error);
-      toast.error("Erro ao criar departamento");
+      toast.error("Erro ao criar departamento. Verifique se você está autenticado.");
     }
   });
 
@@ -65,7 +72,10 @@ const Departments = () => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating department:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -76,7 +86,7 @@ const Departments = () => {
     },
     onError: (error) => {
       console.error('Erro ao atualizar departamento:', error);
-      toast.error("Erro ao atualizar departamento");
+      toast.error("Erro ao atualizar departamento. Verifique se você está autenticado.");
     }
   });
 
@@ -87,7 +97,10 @@ const Departments = () => {
         .delete()
         .eq('id', id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting department:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
@@ -95,7 +108,7 @@ const Departments = () => {
     },
     onError: (error) => {
       console.error('Erro ao excluir departamento:', error);
-      toast.error("Erro ao excluir departamento");
+      toast.error("Erro ao excluir departamento. Verifique se você está autenticado.");
     }
   });
 
