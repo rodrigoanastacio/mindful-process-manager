@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
     import { toast } from "sonner";
     import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
     import { supabase } from "@/integrations/supabase/client";
-    import { useNavigate } from "react-router-dom";
     
     interface Department {
       id: string;
@@ -21,8 +20,11 @@ import { useState, useEffect } from "react";
       email: string;
     }
     
-    const Departments = () => {
-      const navigate = useNavigate();
+    interface DepartmentsProps {
+      onLogout: () => void;
+    }
+    
+    const Departments = ({ onLogout }: DepartmentsProps) => {
       const queryClient = useQueryClient();
       const [user, setUser] = useState<User | null>(null);
       const [newDepartmentName, setNewDepartmentName] = useState("");
@@ -58,18 +60,6 @@ import { useState, useEffect } from "react";
           authListener.subscription.unsubscribe();
         };
       }, []);
-    
-      // Logout
-      const handleLogout = async () => {
-        try {
-          await supabase.auth.signOut();
-          toast.success("Logout realizado com sucesso!");
-          navigate('/login');
-        } catch (error) {
-          console.error("Erro no logout:", error);
-          toast.error("Não foi possível realizar o logout");
-        }
-      };
     
       const { data: departments = [], isLoading } = useQuery({
         queryKey: ['departments'],
@@ -212,23 +202,14 @@ import { useState, useEffect } from "react";
     
       // Se não estiver logado, mostrar tela de login
       if (!user) {
-        return (
-          <div className="flex justify-center items-center min-h-screen">
-            <Card className="w-[350px] p-6">
-              <h2 className="text-2xl font-bold mb-4">Você precisa estar logado para acessar esta página</h2>
-              <Button onClick={() => navigate('/login')} className="w-full">
-                Ir para a tela de login
-              </Button>
-            </Card>
-          </div>
-        );
+        return null;
       }
     
       return (
         <div className="container mx-auto p-4">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Departamentos</h1>
-            <Button onClick={handleLogout} variant="destructive">
+            <Button onClick={onLogout} variant="destructive">
               Logout
             </Button>
           </div>
