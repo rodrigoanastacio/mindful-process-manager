@@ -1,9 +1,14 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "@/pages/Index";
@@ -34,71 +39,95 @@ const AppRoutes = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
+
+  const checkUserSession = useCallback(async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    } catch (error) {
+      console.error("Error checking user session:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);;
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user);
-    };
-    checkUser();
+    checkUserSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const authListener = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user);
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener.data?.subscription.unsubscribe();
     };
-  }, []);
+  }, [checkUserSession]);
 
   useEffect(() => {
     const publicRoutes = ['/login'];
     const isPublicRoute = publicRoutes.includes(location.pathname);
 
-    if (!user && !isPublicRoute) {
-      navigate('/login');
+    if (!loading && !user && !isPublicRoute) {
+      navigate('/login', { replace: true });
     }
-  }, [user, navigate, location]);
+  }, [user, navigate, location, loading]);
 
   const handleLogout = useCallback(async () => {
     try {
       await supabase.auth.signOut();
       toast.success("Logout realizado com sucesso!");
-      navigate('/login');
+      // Use replace to replace the current history entry and prevent going back
+      navigate('/login', { replace: true });
     } catch (error) {
       console.error("Erro no logout:", error);
       toast.error("Não foi possível realizar o logout");
     }
   }, [navigate]);
 
+  if (loading) {
+    return null;
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="*" element={
-            user ? (
-              <>
-                <AppSidebar />
-                <main className="flex-1 overflow-x-hidden">
-                  <div className="container p-4 md:p-6">
-                    <div className="mb-6 flex items-center justify-between">
-                      <SidebarTrigger className="md:hidden" />
+          <Route
+            path="*"
+            element={
+              user ? (
+                <>
+                  <AppSidebar />
+                  <main className="flex-1 overflow-x-hidden">
+                    <div className="container p-4 md:p-6">
+                      <div className="mb-6 flex items-center justify-between">
+                        <SidebarTrigger className="md:hidden" />
+                      </div>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/processos" element={<ProcessTable />} />
+                        <Route
+                          path="/parceiros-juridico"
+                          element={<LegalPartner />}
+                        />
+                        <Route
+                          path="/departments"
+                          element={<Departments onLogout={handleLogout} />}
+                        />
+                      </Routes>
                     </div>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/processos" element={<ProcessTable />} />
-                      <Route
-                        path="/parceiros-juridico"
-                        element={<LegalPartner />}
-                      />
-                      <Route path="/departments" element={<Departments onLogout={handleLogout} />} />
-                    </Routes>
-                  </div>
-                </main>
-              </>
-            ) : null
-          } />
+                  </main>
+                </>
+              ) : (
+                <Login />
+              )
+            }
+          />
         </Routes>
       </div>
     </SidebarProvider>
