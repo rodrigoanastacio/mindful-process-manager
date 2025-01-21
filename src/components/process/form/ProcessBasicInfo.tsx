@@ -54,28 +54,13 @@ export const ProcessBasicInfo = ({
           className="grid grid-cols-2 gap-4"
         >
           <div className="flex items-center space-x-2 border rounded p-4">
-            <RadioGroupItem value="civil" id="civil" />
-            <Label htmlFor="civil">Cívil</Label>
+            <RadioGroupItem value="administrativo" id="administrativo" />
+            <Label htmlFor="administrativo">Administrativo</Label>
           </div>
 
           <div className="flex items-center space-x-2 border rounded p-4">
             <RadioGroupItem value="judicial" id="judicial" />
-            <Label htmlFor="judicial">Família</Label>
-          </div>
-
-          <div className="flex items-center space-x-2 border rounded p-4">
-            <RadioGroupItem value="trabalhista" id="trabalhista" />
-            <Label htmlFor="trabalhista">Trabalhista</Label>
-          </div>
-
-          <div className="flex items-center space-x-2 border rounded p-4">
-            <RadioGroupItem value="criminal" id="criminal" />
-            <Label htmlFor="criminal">Criminal</Label>
-          </div>
-
-          <div className="flex items-center space-x-2 border rounded p-4">
-            <RadioGroupItem value="previdenciario" id="previdenciario" />
-            <Label htmlFor="previdenciario">Previdenciário</Label>
+            <Label htmlFor="judicial">Judicial</Label>
           </div>
         </RadioGroup>
       </div>
