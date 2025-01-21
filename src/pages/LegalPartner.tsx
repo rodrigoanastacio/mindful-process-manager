@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Trash, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { CreateLegalPartnerModal } from "@/components/modal/CreateLegalPartnerModal";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const mockMembers = [
   {
@@ -29,6 +30,7 @@ const mockMembers = [
 ];
 
 export const LegalPartner = () => {
+  const { session } = useSessionContext();
   const [members, setMembers] = useState(mockMembers);
   const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const [editMemberName, setEditMemberName] = useState("");
@@ -44,6 +46,11 @@ export const LegalPartner = () => {
   };
 
   const handleUpdateMember = () => {
+    if (!session) {
+      toast.error("Você precisa estar autenticado para atualizar membros.");
+      return;
+    }
+
     if (
       !editMemberName.trim() ||
       !editMemberEmail.trim() ||
@@ -74,6 +81,11 @@ export const LegalPartner = () => {
   };
 
   const handleDeleteMember = (id: string) => {
+    if (!session) {
+      toast.error("Você precisa estar autenticado para deletar membros.");
+      return;
+    }
+
     setMembers(members.filter((member) => member.id !== id));
     toast.success("Membro excluído com sucesso!");
   };
