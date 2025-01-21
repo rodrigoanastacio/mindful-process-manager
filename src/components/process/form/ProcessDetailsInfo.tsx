@@ -1,71 +1,56 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProcessPriority } from "@/types/database";
+import { useQuery } from "@tanstack/react-query";
+import { departmentService, legalPartnerService } from "@/services/supabaseService";
 
 interface ProcessDetailsInfoProps {
-  deadline: string;
-  setDeadline: (value: string) => void;
-  deadlineTime: string;
-  setDeadlineTime: (value: string) => void;
   priority: ProcessPriority;
   setPriority: (value: ProcessPriority) => void;
-  assignee: string;
-  setAssignee: (value: string) => void;
+  departmentId: string;
+  setDepartmentId: (value: string) => void;
+  lawyerId: string;
+  setLawyerId: (value: string) => void;
 }
 
 export const ProcessDetailsInfo = ({
-  deadline,
-  setDeadline,
-  deadlineTime,
-  setDeadlineTime,
   priority,
   setPriority,
-  assignee,
-  setAssignee,
+  departmentId,
+  setDepartmentId,
+  lawyerId,
+  setLawyerId,
 }: ProcessDetailsInfoProps) => {
+  const { data: departments } = useQuery({
+    queryKey: ['departments'],
+    queryFn: departmentService.getAll
+  });
+
+  const { data: lawyers } = useQuery({
+    queryKey: ['lawyers'],
+    queryFn: legalPartnerService.getAll
+  });
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-4">
-        <Label>Prazo</Label>
-        <div className="flex items-center gap-4">
-          <div className="flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-            <Input
-              type="date"
-              className="rounded"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-            <Input
-              type="time"
-              className="rounded"
-              value={deadlineTime}
-              onChange={(e) => setDeadlineTime(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <Label>Nível de Prioridade</Label>
+        <Label>Prioridade</Label>
         <RadioGroup
           value={priority}
           onValueChange={(value: ProcessPriority) => setPriority(value)}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          className="grid grid-cols-3 gap-4"
         >
-          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <div className="flex items-center space-x-2 border rounded p-4">
             <RadioGroupItem value="baixa" id="baixa" />
             <Label htmlFor="baixa">Baixa</Label>
           </div>
-          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <div className="flex items-center space-x-2 border rounded p-4">
             <RadioGroupItem value="media" id="media" />
             <Label htmlFor="media">Média</Label>
           </div>
-          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <div className="flex items-center space-x-2 border rounded p-4">
             <RadioGroupItem value="alta" id="alta" />
             <Label htmlFor="alta">Alta</Label>
           </div>
@@ -73,17 +58,35 @@ export const ProcessDetailsInfo = ({
       </div>
 
       <div className="space-y-4">
-        <Label htmlFor="assignee">Responsável</Label>
-        <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-          <Input
-            id="assignee"
-            className="rounded"
-            placeholder="Digite o nome ou email do responsável"
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-            required
-          />
-        </div>
+        <Label>Departamento Responsável</Label>
+        <Select value={departmentId} onValueChange={setDepartmentId}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o departamento" />
+          </SelectTrigger>
+          <SelectContent>
+            {departments?.map((department) => (
+              <SelectItem key={department.id} value={department.id}>
+                {department.nome}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-4">
+        <Label>Advogado Responsável</Label>
+        <Select value={lawyerId} onValueChange={setLawyerId}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o advogado" />
+          </SelectTrigger>
+          <SelectContent>
+            {lawyers?.map((lawyer) => (
+              <SelectItem key={lawyer.id} value={lawyer.id}>
+                {lawyer.nome_completo}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
