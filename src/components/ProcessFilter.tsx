@@ -28,26 +28,16 @@ export const ProcessFilter = ({
         />
       </div>
       <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-        <Select className="" onValueChange={onStatusFilter}>
+        <Select onValueChange={onStatusFilter}>
           <SelectTrigger className="w-full sm:w-[180px] rounded">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="bg-white shadow-lg rounded">
-            <SelectItem className="cursor-pointer" value="all">
-              Todos os Status
-            </SelectItem>
-            <SelectItem className="cursor-pointer" value="pending">
-              Pendente
-            </SelectItem>
-            <SelectItem className="cursor-pointer" value="active">
-              Em Andamento
-            </SelectItem>
-            <SelectItem className="cursor-pointer" value="completed">
-              Concluído
-            </SelectItem>
-            <SelectItem className="cursor-pointer" value="archived">
-              Arquivado
-            </SelectItem>
+          <SelectContent>
+            <SelectItem value="all">Todos os Status</SelectItem>
+            <SelectItem value="pending">Pendente</SelectItem>
+            <SelectItem value="active">Em Andamento</SelectItem>
+            <SelectItem value="completed">Concluído</SelectItem>
+            <SelectItem value="archived">Arquivado</SelectItem>
           </SelectContent>
         </Select>
       </div>
