@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,11 +15,80 @@ interface Department {
   data_criacao: string;
 }
 
+interface User {
+  id: string;
+  email: string;
+}
+
 const Departments = () => {
   const queryClient = useQueryClient();
+  const [user, setUser] = useState<User | null>(null);
   const [newDepartmentName, setNewDepartmentName] = useState("");
   const [editDepartmentId, setEditDepartmentId] = useState<string | null>(null);
   const [editDepartmentName, setEditDepartmentName] = useState("");
+
+  // Verificar sessão do usuário
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || ''
+        });
+      }
+    };
+    checkUser();
+
+    // Listener para mudanças de autenticação
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || ''
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Login com Supabase
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        toast.error(`Erro de login: ${error.message}`);
+        return false;
+      }
+
+      toast.success("Login realizado com sucesso!");
+      return true;
+    } catch (error) {
+      console.error("Erro no login:", error);
+      toast.error("Não foi possível realizar o login");
+      return false;
+    }
+  };
+
+  // Logout
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logout realizado com sucesso!");
+    } catch (error) {
+      console.error("Erro no logout:", error);
+      toast.error("Não foi possível realizar o logout");
+    }
+  };
 
   const { data: departments = [], isLoading } = useQuery({
     queryKey: ['departments'],
@@ -31,28 +100,49 @@ const Departments = () => {
       
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!user // Só busca departamentos se usuário estiver logado
   });
 
   const createDepartment = useMutation({
     mutationFn: async (nome: string) => {
-      const { data, error } = await supabase
-        .from('departamentos')
-        .insert([{ nome }])
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      // Verificar se usuário está autenticado
+      if (!user) {
+        toast.error("Você precisa estar logado para criar um departamento.");
+        throw new Error("Usuário não autenticado");
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('departamentos')
+          .insert([{ 
+            nome, 
+            usuario_id: user.id 
+          }])
+          .select()
+          .single();
+        
+        if (error) {
+          console.error('Detailed Supabase Error:', error);
+          toast.error(`Erro ao criar departamento: ${error.message}`);
+          throw error;
+        }
+        
+        return data;
+      } catch (error) {
+        console.error('Erro completo:', error);
+        toast.error("Não foi possível criar o departamento. Verifique suas permissões.");
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
       toast.success("Departamento adicionado com sucesso!");
       setNewDepartmentName("");
     },
-    onError: (error) => {
-      console.error('Erro ao criar departamento:', error);
-      toast.error("Erro ao criar departamento");
+    onError: (error: any) => {
+      console.error('Department Creation Error:', error);
+      toast.error(error.message || "Não foi possível criar o departamento");
     }
   });
 
@@ -129,102 +219,135 @@ const Departments = () => {
     deleteDepartment.mutate(id);
   };
 
-  if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <p>Carregando departamentos...</p>
-    </div>;
+  // Se não estiver logado, mostrar tela de login
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Card className="w-[350px] p-6">
+          <h2 className="text-2xl font-bold mb-4">Login</h2>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const email = (e.target as any).email.value;
+            const password = (e.target as any).password.value;
+            await handleLogin(email, password);
+          }}>
+            <div className="mb-4">
+              <Label htmlFor="email">E-mail</Label>
+              <Input 
+                id="email" 
+                name="email" 
+                type="email" 
+                placeholder="seu@email.com" 
+                required 
+              />
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="password">Senha</Label>
+              <Input 
+                id="password" 
+                name="password" 
+                type="password" 
+                placeholder="********" 
+                required 
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Entrar
+            </Button>
+          </form>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold">Gerenciar Departamentos</h1>
-
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Adicionar Novo Departamento
-          </h2>
-          <div className="space-y-2">
-            <Label htmlFor="newDepartmentName">Nome</Label>
-            <Input
-              id="newDepartmentName"
-              placeholder="Nome do departamento"
-              value={newDepartmentName}
-              onChange={(e) => setNewDepartmentName(e.target.value)}
-            />
-          </div>
-          <Button
-            onClick={handleAddDepartment}
-            className="mt-4 bg-primary hover:bg-primary/90"
-            disabled={createDepartment.isPending}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {createDepartment.isPending ? "Adicionando..." : "Adicionar Departamento"}
-          </Button>
-        </Card>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Lista de Departamentos</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Nome</th>
-                  <th className="text-right p-2">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {departments.map((department: Department) => (
-                  <tr key={department.id} className="border-b">
-                    <td className="p-2">{department.nome}</td>
-                    <td className="p-2 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleEditDepartment(department)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleDeleteDepartment(department.id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {editDepartmentId && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Editar Departamento</h2>
-            <div className="space-y-4">
-              <Label htmlFor="editDepartmentName">Nome</Label>
-              <Input
-                id="editDepartmentName"
-                placeholder="Nome do departamento"
-                value={editDepartmentName}
-                onChange={(e) => setEditDepartmentName(e.target.value)}
-              />
-              <Button
-                onClick={handleUpdateDepartment}
-                className="mt-4 bg-primary hover:bg-primary/90"
-                disabled={updateDepartment.isPending}
-              >
-                {updateDepartment.isPending ? "Atualizando..." : "Atualizar Departamento"}
-              </Button>
-            </div>
-          </Card>
-        )}
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Departamentos</h1>
+        <Button onClick={handleLogout} variant="destructive">
+          Logout
+        </Button>
       </div>
+
+      <Card className="mb-4 p-4">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (newDepartmentName.trim()) {
+              createDepartment.mutate(newDepartmentName);
+            }
+          }}
+          className="flex gap-2"
+        >
+          <Input 
+            value={newDepartmentName}
+            onChange={(e) => setNewDepartmentName(e.target.value)}
+            placeholder="Nome do departamento" 
+            className="flex-grow"
+          />
+          <Button type="submit">
+            <Plus className="mr-2" /> Adicionar
+          </Button>
+        </form>
+      </Card>
+
+      {isLoading ? (
+        <p>Carregando departamentos...</p>
+      ) : (
+        <div className="grid gap-4">
+          {departments.map((dept) => (
+            <Card key={dept.id} className="p-4 flex justify-between items-center">
+              <div>
+                <h3 className="font-semibold">{dept.nome}</h3>
+                {dept.descricao && <p className="text-muted-foreground">{dept.descricao}</p>}
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={() => {
+                    setEditDepartmentId(dept.id);
+                    setEditDepartmentName(dept.nome);
+                  }}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="icon"
+                  onClick={() => {
+                    handleDeleteDepartment(dept.id);
+                  }}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {editDepartmentId && (
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Editar Departamento</h2>
+          <div className="space-y-4">
+            <Label htmlFor="editDepartmentName">Nome</Label>
+            <Input
+              id="editDepartmentName"
+              placeholder="Nome do departamento"
+              value={editDepartmentName}
+              onChange={(e) => setEditDepartmentName(e.target.value)}
+            />
+            <Button
+              onClick={handleUpdateDepartment}
+              className="mt-4 bg-primary hover:bg-primary/90"
+              disabled={updateDepartment.isPending}
+            >
+              {updateDepartment.isPending ? "Atualizando..." : "Atualizar Departamento"}
+            </Button>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
