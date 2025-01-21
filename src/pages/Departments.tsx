@@ -5,37 +5,111 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Trash, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-const mockDepartments = [
-  { id: "1", name: "Legal" },
-  { id: "2", name: "Financial" },
-  { id: "3", name: "HR" },
-  { id: "4", name: "Operations" },
-];
+interface Department {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  data_criacao: string;
+}
 
 const Departments = () => {
-  const [departments, setDepartments] = useState(mockDepartments);
+  const queryClient = useQueryClient();
   const [newDepartmentName, setNewDepartmentName] = useState("");
   const [editDepartmentId, setEditDepartmentId] = useState<string | null>(null);
   const [editDepartmentName, setEditDepartmentName] = useState("");
+
+  const { data: departments = [], isLoading } = useQuery({
+    queryKey: ['departments'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('departamentos')
+        .select('*')
+        .order('nome');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const createDepartment = useMutation({
+    mutationFn: async (nome: string) => {
+      const { data, error } = await supabase
+        .from('departamentos')
+        .insert([{ nome }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['departments'] });
+      toast.success("Departamento adicionado com sucesso!");
+      setNewDepartmentName("");
+    },
+    onError: (error) => {
+      console.error('Erro ao criar departamento:', error);
+      toast.error("Erro ao criar departamento");
+    }
+  });
+
+  const updateDepartment = useMutation({
+    mutationFn: async ({ id, nome }: { id: string; nome: string }) => {
+      const { data, error } = await supabase
+        .from('departamentos')
+        .update({ nome })
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['departments'] });
+      toast.success("Departamento atualizado com sucesso!");
+      setEditDepartmentId(null);
+      setEditDepartmentName("");
+    },
+    onError: (error) => {
+      console.error('Erro ao atualizar departamento:', error);
+      toast.error("Erro ao atualizar departamento");
+    }
+  });
+
+  const deleteDepartment = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('departamentos')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['departments'] });
+      toast.success("Departamento excluído com sucesso!");
+    },
+    onError: (error) => {
+      console.error('Erro ao excluir departamento:', error);
+      toast.error("Erro ao excluir departamento");
+    }
+  });
 
   const handleAddDepartment = () => {
     if (!newDepartmentName.trim()) {
       toast.error("Por favor, preencha o nome do departamento.");
       return;
     }
-    const newDepartment = {
-      id: Date.now().toString(),
-      name: newDepartmentName,
-    };
-    setDepartments([...departments, newDepartment]);
-    setNewDepartmentName("");
-    toast.success("Departamento adicionado com sucesso!");
+    createDepartment.mutate(newDepartmentName);
   };
 
-  const handleEditDepartment = (department: any) => {
+  const handleEditDepartment = (department: Department) => {
     setEditDepartmentId(department.id);
-    setEditDepartmentName(department.name);
+    setEditDepartmentName(department.nome);
   };
 
   const handleUpdateDepartment = () => {
@@ -43,22 +117,23 @@ const Departments = () => {
       toast.error("Por favor, preencha o nome do departamento.");
       return;
     }
-    setDepartments(
-      departments.map((department) =>
-        department.id === editDepartmentId
-          ? { ...department, name: editDepartmentName }
-          : department
-      )
-    );
-    setEditDepartmentId(null);
-    setEditDepartmentName("");
-    toast.success("Departamento atualizado com sucesso!");
+    if (editDepartmentId) {
+      updateDepartment.mutate({
+        id: editDepartmentId,
+        nome: editDepartmentName
+      });
+    }
   };
 
   const handleDeleteDepartment = (id: string) => {
-    setDepartments(departments.filter((department) => department.id !== id));
-    toast.success("Departamento excluído com sucesso!");
+    deleteDepartment.mutate(id);
   };
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <p>Carregando departamentos...</p>
+    </div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
@@ -81,9 +156,10 @@ const Departments = () => {
           <Button
             onClick={handleAddDepartment}
             className="mt-4 bg-primary hover:bg-primary/90"
+            disabled={createDepartment.isPending}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Adicionar Departamento
+            {createDepartment.isPending ? "Adicionando..." : "Adicionar Departamento"}
           </Button>
         </Card>
 
@@ -98,9 +174,9 @@ const Departments = () => {
                 </tr>
               </thead>
               <tbody>
-                {departments.map((department) => (
+                {departments.map((department: Department) => (
                   <tr key={department.id} className="border-b">
-                    <td className="p-2">{department.name}</td>
+                    <td className="p-2">{department.nome}</td>
                     <td className="p-2 text-right">
                       <div className="flex justify-end gap-2">
                         <Button
@@ -141,8 +217,9 @@ const Departments = () => {
               <Button
                 onClick={handleUpdateDepartment}
                 className="mt-4 bg-primary hover:bg-primary/90"
+                disabled={updateDepartment.isPending}
               >
-                Atualizar Departamento
+                {updateDepartment.isPending ? "Atualizando..." : "Atualizar Departamento"}
               </Button>
             </div>
           </Card>
