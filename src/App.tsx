@@ -80,7 +80,6 @@ const AppRoutes = () => {
     try {
       await supabase.auth.signOut();
       toast.success("Logout realizado com sucesso!");
-      // Use replace to replace the current history entry and prevent going back
       navigate('/login', { replace: true });
     } catch (error) {
       console.error("Erro no logout:", error);
@@ -102,7 +101,7 @@ const AppRoutes = () => {
             element={
               user ? (
                 <>
-                  <AppSidebar />
+                  <AppSidebar onLogout={handleLogout} />
                   <main className="flex-1 overflow-x-hidden">
                     <div className="container p-4 md:p-6">
                       <div className="mb-6 flex items-center justify-between">
@@ -117,7 +116,7 @@ const AppRoutes = () => {
                         />
                         <Route
                           path="/departments"
-                          element={<Departments onLogout={handleLogout} />}
+                          element={<Departments />}
                         />
                       </Routes>
                     </div>
