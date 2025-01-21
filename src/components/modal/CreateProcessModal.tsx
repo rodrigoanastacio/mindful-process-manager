@@ -29,8 +29,12 @@ export const CreateProcessModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const numeroProcesso = `${new Date().getFullYear()}/${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
-      
+      const numeroProcesso = `${new Date().getFullYear()}/${Math.floor(
+        Math.random() * 10000
+      )
+        .toString()
+        .padStart(4, "0")}`;
+
       await processService.create({
         numero_processo: numeroProcesso,
         titulo: title,
@@ -44,12 +48,12 @@ export const CreateProcessModal = ({
         data_criacao: new Date().toISOString(),
       });
 
-      queryClient.invalidateQueries({ queryKey: ['processes'] });
+      queryClient.invalidateQueries({ queryKey: ["processes"] });
       toast.success("Processo criado com sucesso!");
       onOpenChange(false);
       resetForm();
     } catch (error) {
-      console.error('Erro ao criar processo:', error);
+      console.error("Erro ao criar processo:", error);
       toast.error("Erro ao criar processo");
     }
   };
@@ -66,7 +70,7 @@ export const CreateProcessModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl bg-white ">
         <div className="p-6">
           <h2 className="text-2xl font-semibold">Criar Novo Processo</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -95,22 +99,34 @@ export const CreateProcessModal = ({
             />
           )}
 
-          <div className="flex justify-between pt-6 border-t">
+          <div className="p-6 flex justify-between items-center">
             {step === 2 ? (
               <>
-                <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setStep(1)}
+                >
                   Anterior
                 </Button>
                 <Button type="submit">Criar Processo</Button>
               </>
             ) : (
               <>
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                  Cancelar
-                </Button>
-                <Button type="button" onClick={() => setStep(2)}>
-                  Próximo
-                </Button>
+                <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                    className="rounded"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+                <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                  <Button className="rounded" onClick={() => setStep(2)}>
+                    Próximo
+                  </Button>
+                </div>
               </>
             )}
           </div>
