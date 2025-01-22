@@ -9,6 +9,12 @@ import {
 import { ProcessPriority, ProcessStatus } from "@/types/database";
 import { Clock, CheckCircle, Archive } from "lucide-react";
 
+import { useQuery } from "@tanstack/react-query";
+import {
+  departmentService,
+  legalPartnerService,
+} from "@/services/supabaseService";
+
 interface ProcessDetailsInfoProps {
   priority: ProcessPriority;
   setPriority: (priority: ProcessPriority) => void;
@@ -25,20 +31,20 @@ const statusConfig = {
     label: "Em Andamento",
     icon: Clock,
     color: "text-blue-500",
-    description: "Processo está em análise ou tramitação"
+    description: "Processo está em análise ou tramitação",
   },
   concluido: {
     label: "Concluído",
     icon: CheckCircle,
     color: "text-green-500",
-    description: "Processo foi finalizado"
+    description: "Processo foi finalizado",
   },
   arquivado: {
     label: "Arquivado",
     icon: Archive,
     color: "text-gray-500",
-    description: "Processo foi arquivado"
-  }
+    description: "Processo foi arquivado",
+  },
 };
 
 export function ProcessDetailsInfo({
@@ -49,14 +55,27 @@ export function ProcessDetailsInfo({
   lawyerId,
   setLawyerId,
   status,
-  setStatus
+  setStatus,
 }: ProcessDetailsInfoProps) {
+  const { data: departments } = useQuery({
+    queryKey: ["departments"],
+    queryFn: departmentService.getAll,
+  });
+
+  const { data: lawyers } = useQuery({
+    queryKey: ["lawyers"],
+    queryFn: legalPartnerService.getAll,
+  });
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
         <div>
           <Label>Status do Processo</Label>
-          <Select value={status} onValueChange={(value: ProcessStatus) => setStatus(value)}>
+          <Select
+            value={status}
+            onValueChange={(value: ProcessStatus) => setStatus(value)}
+          >
             <SelectTrigger className="w-full mt-2">
               <SelectValue placeholder="Selecione o status" />
             </SelectTrigger>
@@ -64,8 +83,8 @@ export function ProcessDetailsInfo({
               {Object.entries(statusConfig).map(([value, config]) => {
                 const Icon = config.icon;
                 return (
-                  <SelectItem 
-                    key={value} 
+                  <SelectItem
+                    key={value}
                     value={value}
                     className="flex items-center space-x-2"
                   >
@@ -85,7 +104,10 @@ export function ProcessDetailsInfo({
 
         <div>
           <Label>Prioridade</Label>
-          <Select value={priority} onValueChange={(value: ProcessPriority) => setPriority(value)}>
+          <Select
+            value={priority}
+            onValueChange={(value: ProcessPriority) => setPriority(value)}
+          >
             <SelectTrigger className="w-full mt-2">
               <SelectValue placeholder="Selecione a prioridade" />
             </SelectTrigger>
@@ -104,8 +126,11 @@ export function ProcessDetailsInfo({
               <SelectValue placeholder="Selecione o departamento" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">Departamento 1</SelectItem>
-              <SelectItem value="2">Departamento 2</SelectItem>
+              {departments?.map((department) => (
+                <SelectItem key={department.id} value={department.id}>
+                  {department.nome}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
