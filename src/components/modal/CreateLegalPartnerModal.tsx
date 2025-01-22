@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -113,6 +113,9 @@ export const CreateLegalPartnerModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0 bg-gray-50">
         <DialogTitle className="sr-only">Adicionar novo advogado</DialogTitle>
+        <DialogDescription id="create-legal-partner-description" className="sr-only">
+          Formulário para adicionar um novo advogado parceiro ao sistema
+        </DialogDescription>
         <div className="container mx-auto p-6">
           <h2 className="text-2xl font-semibold">Adicionar novo advogado</h2>
           <p className="text-sm text-gray-500 mt-1">
