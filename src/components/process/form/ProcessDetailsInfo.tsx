@@ -142,8 +142,11 @@ export function ProcessDetailsInfo({
               <SelectValue placeholder="Selecione o advogado" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">Advogado 1</SelectItem>
-              <SelectItem value="2">Advogado 2</SelectItem>
+              {lawyers?.map((lawyer) => (
+                <SelectItem key={lawyer.id} value={lawyer.id}>
+                  {lawyer.nome_completo}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
