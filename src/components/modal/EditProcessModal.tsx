@@ -1,12 +1,12 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { FileText, Users, Building2, Calendar } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ProcessBasicInfo } from "@/components/process/form/ProcessBasicInfo";
+import { ProcessDetailsInfo } from "@/components/process/form/ProcessDetailsInfo";
+import { ProcessType, ProcessPriority } from "@/types/database";
+import { processService } from "@/services/supabaseService";
 
 interface EditProcessModalProps {
   open: boolean;
@@ -19,54 +19,87 @@ export const EditProcessModal = ({
   onOpenChange,
   processId,
 }: EditProcessModalProps) => {
+  const queryClient = useQueryClient();
+  const [step, setStep] = useState(1);
+  
+  // Basic Info State
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("administrative");
-  const [deadline, setDeadline] = useState("");
-  const [priority, setPriority] = useState("medium");
-  const [assignee, setAssignee] = useState("");
-  const [attachments, setAttachments] = useState<File[]>([]);
-  const [step, setStep] = useState(1);
+  const [type, setType] = useState<ProcessType>("civil");
+  const [protocol, setProtocol] = useState("");
+  
+  // Details Info State
+  const [priority, setPriority] = useState<ProcessPriority>("media");
+  const [departmentId, setDepartmentId] = useState("");
+  const [lawyerId, setLawyerId] = useState("");
 
+  // Fetch process data
+  const { data: process, isLoading } = useQuery({
+    queryKey: ['process', processId],
+    queryFn: () => processId ? processService.getById(processId) : null,
+    enabled: !!processId,
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => processService.update(processId!, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['processes'] });
+      queryClient.invalidateQueries({ queryKey: ['process', processId] });
+      toast.success("Processo atualizado com sucesso!");
+      onOpenChange(false);
+      setStep(1);
+    },
+    onError: (error) => {
+      console.error('Error updating process:', error);
+      toast.error("Erro ao atualizar processo");
+    },
+  });
+
+  // Load process data when available
   useEffect(() => {
-    if (processId) {
-      // Mock data loading
-      const mockProcess = {
-        id: "PRO001",
-        protocol: "2024/001.123-4",
-        title: "Processo de Licenciamento Ambiental",
-        description:
-          "Solicitação de licença ambiental para novo projeto de construção na área central.",
-        status: "active" as const,
-        date: "15/03/2024",
-        deadline: "15/04/2024",
-        assignee: "Maria Silva",
-        department: "Meio Ambiente",
-        priority: "high" as const,
-        type: "administrative",
-      };
-
-      if (processId === mockProcess.id) {
-        setTitle(mockProcess.title);
-        setDescription(mockProcess.description);
-        setType(mockProcess.type);
-        setDeadline(mockProcess.deadline);
-        setPriority(mockProcess.priority);
-        setAssignee(mockProcess.assignee);
-      }
+    if (process) {
+      setTitle(process.titulo);
+      setDescription(process.descricao || "");
+      setType(process.tipo);
+      setProtocol(process.numero_processo);
+      setPriority(process.prioridade);
+      setDepartmentId(process.departamento_id || "");
+      setLawyerId(process.advogado_responsavel_id || "");
     }
-  }, [processId]);
+  }, [process]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Processo atualizado!");
-    onOpenChange(false);
-    setStep(1);
+    
+    const updatedProcess = {
+      titulo: title,
+      descricao: description,
+      tipo: type,
+      numero_processo: protocol,
+      prioridade: priority,
+      departamento_id: departmentId || null,
+      advogado_responsavel_id: lawyerId || null,
+    };
+
+    updateMutation.mutate(updatedProcess);
   };
+
+  if (isLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0 bg-gray-50">
+          <div className="p-6 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0  bg-gray-50">
+      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0 bg-gray-50">
         <div className="p-6 bg-primary/5 border-b">
           <h2 className="text-2xl font-semibold">Editar Processo</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -77,138 +110,26 @@ export const EditProcessModal = ({
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="space-y-8">
-              {step === 1 && (
-                <div className="space-y-6 animate-fade-in">
-                  <div className="space-y-4">
-                    <Label htmlFor="title">Título do Processo</Label>
-                    <Input
-                      id="title"
-                      placeholder="Insira o título do processo"
-                      className="text-lg"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label htmlFor="description">Descrição</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Forneça uma descrição detalhada do processo"
-                      className="min-h-[120px]"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label>Tipo de Processo</Label>
-                    <RadioGroup
-                      defaultValue={type}
-                      onValueChange={setType}
-                      className="grid grid-cols-1 md:grid-cols-3 gap-4"
-                    >
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem
-                          value="administrative"
-                          id="administrative"
-                        />
-                        <Label
-                          htmlFor="administrative"
-                          className="flex items-center gap-2"
-                        >
-                          <FileText className="h-4 w-4" />
-                          Administrativo
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem value="legal" id="legal" />
-                        <Label
-                          htmlFor="legal"
-                          className="flex items-center gap-2"
-                        >
-                          <Building2 className="h-4 w-4" />
-                          Jurídico
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem value="hr" id="hr" />
-                        <Label htmlFor="hr" className="flex items-center gap-2">
-                          <Users className="h-4 w-4" />
-                          Recursos Humanos
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div className="space-y-6 animate-fade-in">
-                  <div className="space-y-4">
-                    <Label>Prazo</Label>
-                    <div className="flex items-center gap-4">
-                      <Input
-                        type="date"
-                        className="flex-1"
-                        value={deadline}
-                        onChange={(e) => setDeadline(e.target.value)}
-                        required
-                      />
-                      <Input type="time" className="flex-1" required />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label>Nível de Prioridade</Label>
-                    <RadioGroup
-                      defaultValue={priority}
-                      onValueChange={setPriority}
-                      className="grid grid-cols-1 md:grid-cols-3 gap-4"
-                    >
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem value="low" id="low" />
-                        <Label htmlFor="low">Baixa</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem value="medium" id="medium" />
-                        <Label htmlFor="medium">Média</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4">
-                        <RadioGroupItem value="high" id="high" />
-                        <Label htmlFor="high">Alta</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label htmlFor="assignee">Responsável</Label>
-                    <Input
-                      id="assignee"
-                      placeholder="Insira o nome ou email do responsável"
-                      value={assignee}
-                      onChange={(e) => setAssignee(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label htmlFor="attachments">Anexos</Label>
-                    <Input
-                      id="attachments"
-                      type="file"
-                      multiple
-                      className="cursor-pointer"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          setAttachments(Array.from(e.target.files));
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
+              {step === 1 ? (
+                <ProcessBasicInfo
+                  title={title}
+                  setTitle={setTitle}
+                  description={description}
+                  setDescription={setDescription}
+                  type={type}
+                  setType={setType}
+                  protocol={protocol}
+                  setProtocol={setProtocol}
+                />
+              ) : (
+                <ProcessDetailsInfo
+                  priority={priority}
+                  setPriority={setPriority}
+                  departmentId={departmentId}
+                  setDepartmentId={setDepartmentId}
+                  lawyerId={lawyerId}
+                  setLawyerId={setLawyerId}
+                />
               )}
             </form>
           </div>
@@ -220,7 +141,12 @@ export const EditProcessModal = ({
               <Button variant="outline" onClick={() => setStep(1)}>
                 Anterior
               </Button>
-              <Button onClick={handleSubmit}>Atualizar Processo</Button>
+              <Button 
+                onClick={handleSubmit}
+                disabled={updateMutation.isPending}
+              >
+                {updateMutation.isPending ? "Atualizando..." : "Atualizar Processo"}
+              </Button>
             </>
           ) : (
             <>

@@ -15,6 +15,21 @@ export const processService = {
     return data;
   },
 
+  async getById(id: string) {
+    const { data, error } = await supabase
+      .from('processos')
+      .select(`
+        *,
+        advogado_responsavel:advogados_parceiros(nome_completo),
+        departamento:departamentos(nome)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
   async create(process: Omit<Process, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
       .from('processos')
