@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,14 +26,32 @@ export const CreateLegalPartnerModal = ({
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [newMemberPhone, setNewMemberPhone] = useState("");
-  const [newMemberSpecialization, setNewMemberSpecialization] = useState("");
+  const [newMemberDepartamento, setNewMemberDepartamento] = useState("");
+
+  // Buscar departamentos
+  const { data: departamentos = [], isLoading: isDepartamentosLoading } = useQuery({
+    queryKey: ["departamentos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("departamentos")
+        .select("nome")
+        .order("nome");
+
+      if (error) {
+        console.error("Erro ao buscar departamentos:", error);
+        throw error;
+      }
+
+      return data.map((dept) => dept.nome);
+    },
+  });
 
   const createMutation = useMutation({
     mutationFn: async (data: {
       nome_completo: string;
       email: string;
       telefone: string;
-      especializacao: string;
+      departamento: string;
     }) => {
       // First check if we're authenticated
       const { data: session } = await supabase.auth.getSession();
@@ -72,13 +91,13 @@ export const CreateLegalPartnerModal = ({
     setNewMemberName("");
     setNewMemberEmail("");
     setNewMemberPhone("");
-    setNewMemberSpecialization("");
+    setNewMemberDepartamento("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMemberName.trim() || !newMemberEmail.trim()) {
-      toast.error("Nome e email são obrigatórios");
+    if (!newMemberName.trim() || !newMemberEmail.trim() || !newMemberDepartamento) {
+      toast.error("Nome, email e departamento são obrigatórios");
       return;
     }
 
@@ -86,7 +105,7 @@ export const CreateLegalPartnerModal = ({
       nome_completo: newMemberName,
       email: newMemberEmail,
       telefone: newMemberPhone,
-      especializacao: newMemberSpecialization,
+      departamento: newMemberDepartamento,
     });
   };
 
@@ -145,17 +164,27 @@ export const CreateLegalPartnerModal = ({
                     </InputMask>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newMemberSpecialization">
-                      Especialização
-                    </Label>
-                    <Input
-                      id="newMemberSpecialization"
-                      placeholder="Área de especialização"
-                      value={newMemberSpecialization}
-                      onChange={(e) =>
-                        setNewMemberSpecialization(e.target.value)
-                      }
-                    />
+                    <Label htmlFor="newMemberDepartamento">Departamento*</Label>
+                    <Select 
+                      value={newMemberDepartamento}
+                      onValueChange={setNewMemberDepartamento}
+                      disabled={isDepartamentosLoading}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={
+                          isDepartamentosLoading 
+                            ? "Carregando departamentos..." 
+                            : "Selecione o departamento"
+                        } />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {departamentos.map((departamento) => (
+                          <SelectItem key={departamento} value={departamento}>
+                            {departamento}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
