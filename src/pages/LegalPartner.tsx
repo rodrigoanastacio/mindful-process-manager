@@ -1,9 +1,10 @@
 import { useState } from "react";
+import InputMask from "react-input-mask";
+import { Trash, Edit, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Trash, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { CreateLegalPartnerModal } from "@/components/modal/CreateLegalPartnerModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -209,12 +210,20 @@ export const LegalPartner = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="editMemberPhone">Telefone</Label>
-                <Input
-                  id="editMemberPhone"
-                  placeholder="Telefone"
+                <InputMask
+                  mask="(99) 99999-9999"
                   value={editMemberPhone}
                   onChange={(e) => setEditMemberPhone(e.target.value)}
-                />
+                >
+                  {(inputProps: any) => (
+                    <Input
+                      {...inputProps}
+                      id="editMemberPhone"
+                      placeholder="(00) 00000-0000"
+                      type="tel"
+                    />
+                  )}
+                </InputMask>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="editMemberSpecialization">Especialização</Label>

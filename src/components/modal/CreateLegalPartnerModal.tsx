@@ -1,12 +1,16 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
+import InputMask from "react-input-mask";
 
 interface CreateLegalPartnerModalProps {
   open: boolean;
@@ -125,12 +129,20 @@ export const CreateLegalPartnerModal = ({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="newMemberPhone">Telefone</Label>
-                    <Input
-                      id="newMemberPhone"
-                      placeholder="Telefone"
+                    <InputMask
+                      mask="(99) 99999-9999"
                       value={newMemberPhone}
                       onChange={(e) => setNewMemberPhone(e.target.value)}
-                    />
+                    >
+                      {(inputProps: any) => (
+                        <Input
+                          {...inputProps}
+                          id="newMemberPhone"
+                          placeholder="(00) 00000-0000"
+                          type="tel"
+                        />
+                      )}
+                    </InputMask>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="newMemberSpecialization">
