@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProcessBasicInfo } from "@/components/process/form/ProcessBasicInfo";
 import { ProcessDetailsInfo } from "@/components/process/form/ProcessDetailsInfo";
-import { ProcessType, ProcessPriority } from "@/types/database";
+import { ProcessType, ProcessPriority, ProcessStatus } from "@/types/database";
 import { processService } from "@/services/supabaseService";
 
 interface EditProcessModalProps {
@@ -30,6 +30,7 @@ export const EditProcessModal = ({
   
   // Details Info State
   const [priority, setPriority] = useState<ProcessPriority>("media");
+  const [status, setStatus] = useState<ProcessStatus>("em_andamento");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
 
@@ -64,6 +65,7 @@ export const EditProcessModal = ({
       setType(process.tipo);
       setProtocol(process.numero_processo);
       setPriority(process.prioridade);
+      setStatus(process.status);
       setDepartmentId(process.departamento_id || "");
       setLawyerId(process.advogado_responsavel_id || "");
     }
@@ -77,6 +79,7 @@ export const EditProcessModal = ({
       descricao: description,
       tipo: type,
       numero_processo: protocol,
+      status: status,
       prioridade: priority,
       departamento_id: departmentId || null,
       advogado_responsavel_id: lawyerId || null,
@@ -129,6 +132,8 @@ export const EditProcessModal = ({
                   setDepartmentId={setDepartmentId}
                   lawyerId={lawyerId}
                   setLawyerId={setLawyerId}
+                  status={status}
+                  setStatus={setStatus}
                 />
               )}
             </form>
