@@ -1,12 +1,18 @@
+import { useState } from "react";
+import { processService } from "@/services/supabaseService";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import InputMask from "react-input-mask";
 import { toast } from "sonner";
+
 import { ProcessBasicInfo } from "../process/form/ProcessBasicInfo";
 import { ProcessDetailsInfo } from "../process/form/ProcessDetailsInfo";
 import { ProcessPriority, ProcessType } from "@/types/database";
-import { processService } from "@/services/supabaseService";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface CreateProcessModalProps {
   open: boolean;
@@ -26,6 +32,7 @@ export const CreateProcessModal = ({
   const [priority, setPriority] = useState<ProcessPriority>("media");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
+  const [clienteTelefone, setClienteTelefone] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +48,7 @@ export const CreateProcessModal = ({
         advogado_responsavel_id: lawyerId || null,
         arquivos_relacionados: null,
         data_criacao: new Date().toISOString(),
+        cliente_telefone: clienteTelefone,
       });
 
       queryClient.invalidateQueries({ queryKey: ["processes"] });
@@ -62,6 +70,7 @@ export const CreateProcessModal = ({
     setPriority("media");
     setDepartmentId("");
     setLawyerId("");
+    setClienteTelefone("");
   };
 
   return (
@@ -97,6 +106,28 @@ export const CreateProcessModal = ({
                   lawyerId={lawyerId}
                   setLawyerId={setLawyerId}
                 />
+              )}
+
+              {step === 1 && (
+                <div className="space-y-4">
+                  <Label htmlFor="clienteTelefone">
+                    Número de Contato do Cliente
+                  </Label>
+                  <InputMask
+                    mask="(99) 99999-9999"
+                    value={clienteTelefone}
+                    onChange={(e) => setClienteTelefone(e.target.value)}
+                  >
+                    {(inputProps: any) => (
+                      <Input
+                        {...inputProps}
+                        id="clienteTelefone"
+                        placeholder="(00) 00000-0000"
+                        type="tel"
+                      />
+                    )}
+                  </InputMask>
+                </div>
               )}
 
               <div className="p-6 flex justify-between items-center">

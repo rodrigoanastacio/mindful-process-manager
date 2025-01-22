@@ -1,7 +1,12 @@
-export type ProcessType = 'civil' | 'familia' | 'trabalhista' | 'criminal' | 'previdenciario';
-export type ProcessStatus = 'em_andamento' | 'concluido' | 'arquivado';
-export type ProcessPriority = 'alta' | 'media' | 'baixa';
-export type UserPermission = 'administrador' | 'usuario_comum';
+export type ProcessType =
+  | "civil"
+  | "familia"
+  | "trabalhista"
+  | "criminal"
+  | "previdenciario";
+export type ProcessStatus = "em_andamento" | "concluido" | "arquivado";
+export type ProcessPriority = "alta" | "media" | "baixa";
+export type UserPermission = "administrador" | "usuario_comum";
 
 export interface Process {
   id: string;
@@ -17,6 +22,7 @@ export interface Process {
   data_criacao: string;
   created_at: string;
   updated_at: string;
+  cliente_telefone: string | null;
 }
 
 export interface User {

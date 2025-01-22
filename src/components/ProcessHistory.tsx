@@ -32,29 +32,29 @@ export const ProcessHistory = ({
 
   const formatWhatsAppMessage = (entry: HistoryEntry) => {
     const message = `
-*Atualização no Status do Processo*
+    *Atualização no Status do Processo*
 
-Olá!
+    Olá!
 
-Uma nova atualização foi registrada no processo.
+    Uma nova atualização foi registrada no processo.
 
-*Detalhes da Atualização:*
-📋 *Tipo*: ${
+    *Detalhes da Atualização:*
+    📋 *Tipo*: ${
       entry.type === "comment"
         ? "Comentário"
         : entry.type === "status"
         ? "Mudança de Status"
         : "Documento"
     }
-👤 *Responsável*: ${entry.user}
-📅 *Data*: ${entry.date}
-📝 *Descrição*: ${entry.description}
+    👤 *Responsável*: ${entry.user}
+    📅 *Data*: ${entry.date}
+    📝 *Descrição*: ${entry.description}
 
-Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
+    Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
 
-Atenciosamente,
-Equipe de Gerenciamento de Processos
-    `.trim();
+    Atenciosamente,
+    Equipe de Gerenciamento de Processos
+        `.trim();
 
     return message;
   };

@@ -1,4 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -6,10 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { ProcessPriority, ProcessStatus } from "@/types/database";
+import InputMask from "react-input-mask";
 import { Clock, CheckCircle, Archive } from "lucide-react";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   departmentService,
   legalPartnerService,
@@ -24,6 +28,8 @@ interface ProcessDetailsInfoProps {
   setLawyerId: (id: string) => void;
   status: ProcessStatus;
   setStatus: (status: ProcessStatus) => void;
+  clientPhone: string;
+  setClientPhone: (phone: string) => void;
 }
 
 const statusConfig = {
@@ -56,6 +62,8 @@ export function ProcessDetailsInfo({
   setLawyerId,
   status,
   setStatus,
+  clientPhone,
+  setClientPhone,
 }: ProcessDetailsInfoProps) {
   const { data: departments } = useQuery({
     queryKey: ["departments"],

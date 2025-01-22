@@ -7,6 +7,9 @@ import { ProcessBasicInfo } from "@/components/process/form/ProcessBasicInfo";
 import { ProcessDetailsInfo } from "@/components/process/form/ProcessDetailsInfo";
 import { ProcessType, ProcessPriority, ProcessStatus } from "@/types/database";
 import { processService } from "@/services/supabaseService";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import InputMask from "react-input-mask";
 
 interface EditProcessModalProps {
   open: boolean;
@@ -21,23 +24,24 @@ export const EditProcessModal = ({
 }: EditProcessModalProps) => {
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
-  
+
   // Basic Info State
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState<ProcessType>("civil");
   const [protocol, setProtocol] = useState("");
-  
+
   // Details Info State
   const [priority, setPriority] = useState<ProcessPriority>("media");
   const [status, setStatus] = useState<ProcessStatus>("em_andamento");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
+  const [clienteTelefone, setClienteTelefone] = useState("");
 
   // Fetch process data
   const { data: process, isLoading } = useQuery({
-    queryKey: ['process', processId],
-    queryFn: () => processId ? processService.getById(processId) : null,
+    queryKey: ["process", processId],
+    queryFn: () => (processId ? processService.getById(processId) : null),
     enabled: !!processId,
   });
 
@@ -45,14 +49,14 @@ export const EditProcessModal = ({
   const updateMutation = useMutation({
     mutationFn: (data: any) => processService.update(processId!, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['processes'] });
-      queryClient.invalidateQueries({ queryKey: ['process', processId] });
+      queryClient.invalidateQueries({ queryKey: ["processes"] });
+      queryClient.invalidateQueries({ queryKey: ["process", processId] });
       toast.success("Processo atualizado com sucesso!");
       onOpenChange(false);
       setStep(1);
     },
     onError: (error) => {
-      console.error('Error updating process:', error);
+      console.error("Error updating process:", error);
       toast.error("Erro ao atualizar processo");
     },
   });
@@ -68,12 +72,13 @@ export const EditProcessModal = ({
       setStatus(process.status);
       setDepartmentId(process.departamento_id || "");
       setLawyerId(process.advogado_responsavel_id || "");
+      setClienteTelefone(process.cliente_telefone || "");
     }
   }, [process]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const updatedProcess = {
       titulo: title,
       descricao: description,
@@ -83,6 +88,7 @@ export const EditProcessModal = ({
       prioridade: priority,
       departamento_id: departmentId || null,
       advogado_responsavel_id: lawyerId || null,
+      cliente_telefone: clienteTelefone,
     };
 
     updateMutation.mutate(updatedProcess);
@@ -136,6 +142,28 @@ export const EditProcessModal = ({
                   setStatus={setStatus}
                 />
               )}
+
+              {step === 1 && (
+                <div className="space-y-4">
+                  <Label htmlFor="clienteTelefone">
+                    Número de Contato do Cliente
+                  </Label>
+                  <InputMask
+                    mask="(99) 99999-9999"
+                    value={clienteTelefone}
+                    onChange={(e) => setClienteTelefone(e.target.value)}
+                  >
+                    {(inputProps: any) => (
+                      <Input
+                        {...inputProps}
+                        id="clienteTelefone"
+                        placeholder="(00) 00000-0000"
+                        type="tel"
+                      />
+                    )}
+                  </InputMask>
+                </div>
+              )}
             </form>
           </div>
         </div>
@@ -146,11 +174,13 @@ export const EditProcessModal = ({
               <Button variant="outline" onClick={() => setStep(1)}>
                 Anterior
               </Button>
-              <Button 
+              <Button
                 onClick={handleSubmit}
                 disabled={updateMutation.isPending}
               >
-                {updateMutation.isPending ? "Atualizando..." : "Atualizar Processo"}
+                {updateMutation.isPending
+                  ? "Atualizando..."
+                  : "Atualizar Processo"}
               </Button>
             </>
           ) : (

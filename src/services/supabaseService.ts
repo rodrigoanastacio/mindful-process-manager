@@ -3,13 +3,11 @@ import { Process, Department, LegalPartner, Log } from "@/types/database";
 
 export const processService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('processos')
-      .select(`
-        *,
-        advogado_responsavel:advogados_parceiros(nome_completo),
-        departamento:departamentos(nome)
-      `);
+    const { data, error } = await supabase.from("processos").select(`
+            *,
+            advogado_responsavel:advogados_parceiros(nome_completo),
+            departamento:departamentos(nome)
+          `);
 
     if (error) throw error;
     return data;
@@ -17,22 +15,24 @@ export const processService = {
 
   async getById(id: string) {
     const { data, error } = await supabase
-      .from('processos')
-      .select(`
-        *,
-        advogado_responsavel:advogados_parceiros(nome_completo),
-        departamento:departamentos(nome)
-      `)
-      .eq('id', id)
+      .from("processos")
+      .select(
+        `
+            *,
+            advogado_responsavel:advogados_parceiros(nome_completo),
+            departamento:departamentos(nome)
+          `
+      )
+      .eq("id", id)
       .single();
 
     if (error) throw error;
     return data;
   },
 
-  async create(process: Omit<Process, 'id' | 'created_at' | 'updated_at'>) {
+  async create(process: Omit<Process, "id" | "created_at" | "updated_at">) {
     const { data, error } = await supabase
-      .from('processos')
+      .from("processos")
       .insert(process)
       .select()
       .single();
@@ -43,9 +43,9 @@ export const processService = {
 
   async update(id: string, process: Partial<Process>) {
     const { data, error } = await supabase
-      .from('processos')
+      .from("processos")
       .update(process)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -54,41 +54,36 @@ export const processService = {
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('processos')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("processos").delete().eq("id", id);
 
     if (error) throw error;
-  }
+  },
 };
 
 export const departmentService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('departamentos')
-      .select('*');
+    const { data, error } = await supabase.from("departamentos").select("*");
 
     if (error) throw error;
     return data;
-  }
+  },
 };
 
 export const legalPartnerService = {
   async getAll() {
     const { data, error } = await supabase
-      .from('advogados_parceiros')
-      .select('*');
+      .from("advogados_parceiros")
+      .select("*");
 
     if (error) throw error;
     return data;
-  }
+  },
 };
 
 export const logService = {
-  async create(log: Omit<Log, 'id' | 'created_at'>) {
+  async create(log: Omit<Log, "id" | "created_at">) {
     const { data, error } = await supabase
-      .from('logs')
+      .from("logs")
       .insert(log)
       .select()
       .single();
@@ -99,15 +94,17 @@ export const logService = {
 
   async getByProcess(processId: string) {
     const { data, error } = await supabase
-      .from('logs')
-      .select(`
-        *,
-        usuario:usuarios(nome)
-      `)
-      .eq('processo_id', processId)
-      .order('data_hora', { ascending: false });
+      .from("logs")
+      .select(
+        `
+            *,
+            usuario:usuarios(nome)
+          `
+      )
+      .eq("processo_id", processId)
+      .order("data_hora", { ascending: false });
 
     if (error) throw error;
     return data;
-  }
+  },
 };
