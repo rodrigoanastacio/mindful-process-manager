@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { CreateLegalPartnerModal } from "@/components/modal/CreateLegalPartnerModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,9 +17,28 @@ export const LegalPartner = () => {
   const [editMemberName, setEditMemberName] = useState("");
   const [editMemberEmail, setEditMemberEmail] = useState("");
   const [editMemberPhone, setEditMemberPhone] = useState("");
-  const [editMemberSpecialization, setEditMemberSpecialization] = useState("");
+  const [editMemberEspecializacao, setEditMemberEspecializacao] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+  // Buscar departamentos
+  const { data: departamentos = [], isLoading: isDepartamentosLoading } = useQuery({
+    queryKey: ["departamentos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("departamentos")
+        .select("nome")
+        .order("nome");
+
+      if (error) {
+        console.error("Erro ao buscar departamentos:", error);
+        throw error;
+      }
+
+      return data.map((dept) => dept.nome);
+    },
+  });
+
+  // Buscar advogados
   const { data: lawyers, isLoading } = useQuery({
     queryKey: ["lawyers"],
     queryFn: async () => {
@@ -86,12 +106,12 @@ export const LegalPartner = () => {
     setEditMemberName(member.nome_completo);
     setEditMemberEmail(member.email);
     setEditMemberPhone(member.telefone || "");
-    setEditMemberSpecialization(member.especializacao || "");
+    setEditMemberEspecializacao(member.especializacao || "");
   };
 
   const handleUpdateMember = () => {
-    if (!editMemberId || !editMemberName.trim() || !editMemberEmail.trim()) {
-      toast.error("Nome e email são obrigatórios");
+    if (!editMemberId || !editMemberName.trim() || !editMemberEmail.trim() || !editMemberEspecializacao) {
+      toast.error("Nome, email e especialização são obrigatórios");
       return;
     }
 
@@ -100,7 +120,7 @@ export const LegalPartner = () => {
       nome_completo: editMemberName,
       email: editMemberEmail,
       telefone: editMemberPhone,
-      especializacao: editMemberSpecialization,
+      especializacao: editMemberEspecializacao,
     });
   };
 
@@ -226,26 +246,41 @@ export const LegalPartner = () => {
                 </InputMask>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="editMemberSpecialization">Especialização</Label>
-                <Input
-                  id="editMemberSpecialization"
-                  placeholder="Área de especialização"
-                  value={editMemberSpecialization}
-                  onChange={(e) => setEditMemberSpecialization(e.target.value)}
-                />
+                <Label htmlFor="editMemberEspecializacao">Especialização*</Label>
+                <Select 
+                  value={editMemberEspecializacao}
+                  onValueChange={setEditMemberEspecializacao}
+                  disabled={isDepartamentosLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={
+                      isDepartamentosLoading 
+                        ? "Carregando departamentos..." 
+                        : "Selecione a especialização"
+                    } />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departamentos.map((departamento) => (
+                      <SelectItem key={departamento} value={departamento}>
+                        {departamento}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setEditMemberId(null)}>
+              <Button 
+                variant="outline" 
+                onClick={() => setEditMemberId(null)}
+              >
                 Cancelar
               </Button>
-              <Button
+              <Button 
                 onClick={handleUpdateMember}
                 disabled={updateMutation.isPending}
               >
-                {updateMutation.isPending
-                  ? "Atualizando..."
-                  : "Atualizar Advogado"}
+                {updateMutation.isPending ? "Atualizando..." : "Atualizar Advogado"}
               </Button>
             </div>
           </Card>
