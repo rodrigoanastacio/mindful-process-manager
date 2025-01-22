@@ -1,4 +1,4 @@
-export type ProcessType = 'administrativo' | 'judicial';
+export type ProcessType = 'civil' | 'familia' | 'trabalhista' | 'criminal' | 'previdenciario';
 export type ProcessStatus = 'em_andamento' | 'concluido' | 'arquivado';
 export type ProcessPriority = 'alta' | 'media' | 'baixa';
 export type UserPermission = 'administrador' | 'usuario_comum';

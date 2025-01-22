@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProcessType } from "@/types/database";
+import { Building2, Scale, Briefcase, Gavel, Heart } from "lucide-react";
 
 interface ProcessBasicInfoProps {
   title: string;
@@ -51,16 +52,46 @@ export const ProcessBasicInfo = ({
         <RadioGroup
           value={type}
           onValueChange={(value: ProcessType) => setType(value)}
-          className="grid grid-cols-2 gap-4"
+          className="grid grid-cols-2 md:grid-cols-3 gap-4"
         >
           <div className="flex items-center space-x-2 border rounded p-4">
-            <RadioGroupItem value="administrativo" id="administrativo" />
-            <Label htmlFor="administrativo">Administrativo</Label>
+            <RadioGroupItem value="civil" id="civil" />
+            <Label htmlFor="civil" className="flex items-center gap-2">
+              <Scale className="h-4 w-4" />
+              Cível
+            </Label>
           </div>
 
           <div className="flex items-center space-x-2 border rounded p-4">
-            <RadioGroupItem value="judicial" id="judicial" />
-            <Label htmlFor="judicial">Judicial</Label>
+            <RadioGroupItem value="familia" id="familia" />
+            <Label htmlFor="familia" className="flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              Família
+            </Label>
+          </div>
+
+          <div className="flex items-center space-x-2 border rounded p-4">
+            <RadioGroupItem value="trabalhista" id="trabalhista" />
+            <Label htmlFor="trabalhista" className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              Trabalhista
+            </Label>
+          </div>
+
+          <div className="flex items-center space-x-2 border rounded p-4">
+            <RadioGroupItem value="criminal" id="criminal" />
+            <Label htmlFor="criminal" className="flex items-center gap-2">
+              <Gavel className="h-4 w-4" />
+              Criminal
+            </Label>
+          </div>
+
+          <div className="flex items-center space-x-2 border rounded p-4">
+            <RadioGroupItem value="previdenciario" id="previdenciario" />
+            <Label htmlFor="previdenciario" className="flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Previdenciário
+            </Label>
           </div>
         </RadioGroup>
       </div>

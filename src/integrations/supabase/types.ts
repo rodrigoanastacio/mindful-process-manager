@@ -211,7 +211,13 @@ export type Database = {
     Enums: {
       processo_prioridade: "alta" | "media" | "baixa"
       processo_status: "em_andamento" | "concluido" | "arquivado"
-      processo_tipo: "administrativo" | "judicial"
+      processo_tipo:
+        | "civil"
+        | "familia"
+        | "trabalhista"
+        | "criminal"
+        | "previdenciario"
+      processo_tipo_old: "administrativo" | "judicial"
       usuario_permissao: "administrador" | "usuario_comum"
     }
     CompositeTypes: {
