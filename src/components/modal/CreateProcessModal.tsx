@@ -66,69 +66,73 @@ export const CreateProcessModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl bg-white">
-        <div className="p-6">
+      <DialogContent className="max-w-full h-screen flex flex-col p-0 gap-0 bg-gray-50">
+        <div className="p-6 bg-primary/5 border-b">
           <h2 className="text-2xl font-semibold">Criar Novo Processo</h2>
           <p className="text-sm text-gray-500 mt-1">
             Preencha os detalhes do processo abaixo
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8 px-6">
-          {step === 1 ? (
-            <ProcessBasicInfo
-              protocol={protocol}
-              setProtocol={setProtocol}
-              title={title}
-              setTitle={setTitle}
-              description={description}
-              setDescription={setDescription}
-              type={type}
-              setType={setType}
-            />
-          ) : (
-            <ProcessDetailsInfo
-              priority={priority}
-              setPriority={setPriority}
-              departmentId={departmentId}
-              setDepartmentId={setDepartmentId}
-              lawyerId={lawyerId}
-              setLawyerId={setLawyerId}
-            />
-          )}
+        <div className="flex-1 overflow-auto p-6">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {step === 1 ? (
+                <ProcessBasicInfo
+                  protocol={protocol}
+                  setProtocol={setProtocol}
+                  title={title}
+                  setTitle={setTitle}
+                  description={description}
+                  setDescription={setDescription}
+                  type={type}
+                  setType={setType}
+                />
+              ) : (
+                <ProcessDetailsInfo
+                  priority={priority}
+                  setPriority={setPriority}
+                  departmentId={departmentId}
+                  setDepartmentId={setDepartmentId}
+                  lawyerId={lawyerId}
+                  setLawyerId={setLawyerId}
+                />
+              )}
 
-          <div className="p-6 flex justify-between items-center">
-            {step === 2 ? (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                >
-                  Anterior
-                </Button>
-                <Button type="submit">Criar Processo</Button>
-              </>
-            ) : (
-              <>
-                <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => onOpenChange(false)}
-                    className="rounded"
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-                <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-                  <Button className="rounded" onClick={() => setStep(2)}>
-                    Próximo
-                  </Button>
-                </div>
-              </>
-            )}
+              <div className="p-6 flex justify-between items-center">
+                {step === 2 ? (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setStep(1)}
+                    >
+                      Anterior
+                    </Button>
+                    <Button type="submit">Criar Processo</Button>
+                  </>
+                ) : (
+                  <>
+                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                        className="rounded"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+                      <Button className="rounded" onClick={() => setStep(2)}>
+                        Próximo
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
