@@ -18,6 +18,7 @@ import Departments from "@/pages/Departments";
 import Login from "@/pages/Login";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 const queryClient = new QueryClient();
 
@@ -53,7 +54,7 @@ const AppRoutes = () => {
     } finally {
       setLoading(false);
     }
-  }, []);;
+  }, []);
 
   useEffect(() => {
     checkUserSession();
@@ -79,11 +80,17 @@ const AppRoutes = () => {
   const handleLogout = useCallback(async () => {
     try {
       await supabase.auth.signOut();
-      toast.success("Logout realizado com sucesso!");
+      toast({
+        title: "Logout realizado com sucesso!"
+      });
       navigate('/login', { replace: true });
     } catch (error) {
       console.error("Erro no logout:", error);
-      toast.error("Não foi possível realizar o logout");
+      toast({
+        title: "Erro no logout",
+        description: "Não foi possível realizar o logout",
+        variant: "destructive"
+      });
     }
   }, [navigate]);
 
