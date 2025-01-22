@@ -30,36 +30,45 @@ export const ProcessBasicInfo = ({
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-4">
         <Label htmlFor="protocol">Número do Processo</Label>
-        <Input
-          id="protocol"
-          placeholder="Digite o número do processo"
-          value={protocol}
-          onChange={(e) => setProtocol(e.target.value)}
-          required
-        />
+
+        <div className="relative flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <Input
+            id="protocol"
+            placeholder="Digite o número do processo"
+            value={protocol}
+            className="rounded"
+            onChange={(e) => setProtocol(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
       <div className="space-y-4">
         <Label htmlFor="title">Título do Processo</Label>
-        <Input
-          id="title"
-          placeholder="Digite o título do processo"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+        <div className="relative flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <Input
+            id="title"
+            placeholder="Digite o título do processo"
+            value={title}
+            className="rounded"
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
       <div className="space-y-4">
         <Label htmlFor="description">Descrição</Label>
-        <Textarea
-          id="description"
-          placeholder="Forneça uma descrição detalhada do processo"
-          className="min-h-[120px]"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
+        <div className="relative flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <Textarea
+            id="description"
+            placeholder="Forneça uma descrição detalhada do processo"
+            className="min-h-[120px] rounded"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -69,7 +78,7 @@ export const ProcessBasicInfo = ({
           onValueChange={(value: ProcessType) => setType(value)}
           className="grid grid-cols-2 md:grid-cols-3 gap-4"
         >
-          <div className="flex items-center space-x-2 border rounded p-4">
+          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
             <RadioGroupItem value="civil" id="civil" />
             <Label htmlFor="civil" className="flex items-center gap-2">
               <Scale className="h-4 w-4" />
@@ -77,7 +86,7 @@ export const ProcessBasicInfo = ({
             </Label>
           </div>
 
-          <div className="flex items-center space-x-2 border rounded p-4">
+          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
             <RadioGroupItem value="familia" id="familia" />
             <Label htmlFor="familia" className="flex items-center gap-2">
               <Heart className="h-4 w-4" />
@@ -85,7 +94,7 @@ export const ProcessBasicInfo = ({
             </Label>
           </div>
 
-          <div className="flex items-center space-x-2 border rounded p-4">
+          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
             <RadioGroupItem value="trabalhista" id="trabalhista" />
             <Label htmlFor="trabalhista" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
@@ -93,7 +102,7 @@ export const ProcessBasicInfo = ({
             </Label>
           </div>
 
-          <div className="flex items-center space-x-2 border rounded p-4">
+          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
             <RadioGroupItem value="criminal" id="criminal" />
             <Label htmlFor="criminal" className="flex items-center gap-2">
               <Gavel className="h-4 w-4" />
@@ -101,7 +110,7 @@ export const ProcessBasicInfo = ({
             </Label>
           </div>
 
-          <div className="flex items-center space-x-2 border rounded p-4">
+          <div className="flex items-center space-x-2 border rounded p-4 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
             <RadioGroupItem value="previdenciario" id="previdenciario" />
             <Label htmlFor="previdenciario" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />

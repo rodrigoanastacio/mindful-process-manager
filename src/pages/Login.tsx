@@ -26,7 +26,7 @@ const Login = () => {
       }
 
       toast.success("Login realizado com sucesso!");
-      navigate("/departments");
+      navigate("/");
     } catch (error) {
       console.error("Erro no login:", error);
       toast.error("Não foi possível realizar o login");
@@ -34,8 +34,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-[350px] p-6">
+    <div className="flex justify-center items-center min-h-screen min-w-full">
+      <Card className="w-[350px] p-6 rounded">
         <h2 className="text-2xl font-bold mb-4">Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
