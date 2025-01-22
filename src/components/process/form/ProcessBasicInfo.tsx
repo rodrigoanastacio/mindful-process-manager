@@ -12,6 +12,8 @@ interface ProcessBasicInfoProps {
   setDescription: (value: string) => void;
   type: ProcessType;
   setType: (value: ProcessType) => void;
+  protocol: string;
+  setProtocol: (value: string) => void;
 }
 
 export const ProcessBasicInfo = ({
@@ -21,9 +23,22 @@ export const ProcessBasicInfo = ({
   setDescription,
   type,
   setType,
+  protocol,
+  setProtocol,
 }: ProcessBasicInfoProps) => {
   return (
     <div className="space-y-6 animate-fade-in">
+      <div className="space-y-4">
+        <Label htmlFor="protocol">Número do Processo</Label>
+        <Input
+          id="protocol"
+          placeholder="Digite o número do processo"
+          value={protocol}
+          onChange={(e) => setProtocol(e.target.value)}
+          required
+        />
+      </div>
+
       <div className="space-y-4">
         <Label htmlFor="title">Título do Processo</Label>
         <Input

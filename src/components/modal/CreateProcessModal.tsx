@@ -19,9 +19,10 @@ export const CreateProcessModal = ({
 }: CreateProcessModalProps) => {
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
+  const [protocol, setProtocol] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState<ProcessType>("administrativo");
+  const [type, setType] = useState<ProcessType>("civil");
   const [priority, setPriority] = useState<ProcessPriority>("media");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
@@ -29,14 +30,8 @@ export const CreateProcessModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const numeroProcesso = `${new Date().getFullYear()}/${Math.floor(
-        Math.random() * 10000
-      )
-        .toString()
-        .padStart(4, "0")}`;
-
       await processService.create({
-        numero_processo: numeroProcesso,
+        numero_processo: protocol,
         titulo: title,
         descricao: description,
         tipo: type,
@@ -60,9 +55,10 @@ export const CreateProcessModal = ({
 
   const resetForm = () => {
     setStep(1);
+    setProtocol("");
     setTitle("");
     setDescription("");
-    setType("administrativo");
+    setType("civil");
     setPriority("media");
     setDepartmentId("");
     setLawyerId("");
@@ -70,7 +66,7 @@ export const CreateProcessModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl bg-white ">
+      <DialogContent className="max-w-3xl bg-white">
         <div className="p-6">
           <h2 className="text-2xl font-semibold">Criar Novo Processo</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -81,6 +77,8 @@ export const CreateProcessModal = ({
         <form onSubmit={handleSubmit} className="space-y-8 px-6">
           {step === 1 ? (
             <ProcessBasicInfo
+              protocol={protocol}
+              setProtocol={setProtocol}
               title={title}
               setTitle={setTitle}
               description={description}
