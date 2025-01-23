@@ -115,6 +115,7 @@ export type Database = {
         Row: {
           advogado_responsavel_id: string | null
           arquivos_relacionados: string[] | null
+          cliente_telefone: string | null
           created_at: string
           data_criacao: string
           departamento_id: string | null
@@ -130,6 +131,7 @@ export type Database = {
         Insert: {
           advogado_responsavel_id?: string | null
           arquivos_relacionados?: string[] | null
+          cliente_telefone?: string | null
           created_at?: string
           data_criacao?: string
           departamento_id?: string | null
@@ -145,6 +147,7 @@ export type Database = {
         Update: {
           advogado_responsavel_id?: string | null
           arquivos_relacionados?: string[] | null
+          cliente_telefone?: string | null
           created_at?: string
           data_criacao?: string
           departamento_id?: string | null

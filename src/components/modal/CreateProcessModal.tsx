@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 import { ProcessBasicInfo } from "../process/form/ProcessBasicInfo";
 import { ProcessDetailsInfo } from "../process/form/ProcessDetailsInfo";
-import { ProcessPriority, ProcessType } from "@/types/database";
+import { ProcessPriority, ProcessType, ProcessStatus } from "@/types/database";
 
 interface CreateProcessModalProps {
   open: boolean;
@@ -30,6 +30,7 @@ export const CreateProcessModal = ({
   const [description, setDescription] = useState("");
   const [type, setType] = useState<ProcessType>("civil");
   const [priority, setPriority] = useState<ProcessPriority>("media");
+  const [status, setStatus] = useState<ProcessStatus>("em_andamento");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
   const [clienteTelefone, setClienteTelefone] = useState("");
@@ -43,7 +44,7 @@ export const CreateProcessModal = ({
         descricao: description,
         tipo: type,
         prioridade: priority,
-        status: "em_andamento",
+        status: status,
         departamento_id: departmentId || null,
         advogado_responsavel_id: lawyerId || null,
         arquivos_relacionados: null,
@@ -68,6 +69,7 @@ export const CreateProcessModal = ({
     setDescription("");
     setType("civil");
     setPriority("media");
+    setStatus("em_andamento");
     setDepartmentId("");
     setLawyerId("");
     setClienteTelefone("");
@@ -105,6 +107,8 @@ export const CreateProcessModal = ({
                   setDepartmentId={setDepartmentId}
                   lawyerId={lawyerId}
                   setLawyerId={setLawyerId}
+                  status={status}
+                  setStatus={setStatus}
                 />
               )}
 
