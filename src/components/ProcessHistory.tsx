@@ -1,6 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare, AlertCircle, FileText, Send } from "lucide-react";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 interface HistoryEntry {
   id: string;
@@ -32,41 +33,42 @@ export const ProcessHistory = ({
 
   const formatWhatsAppMessage = (entry: HistoryEntry) => {
     const message = `
-    *Atualização no Status do Processo*
+*Atualização no Status do Processo*
 
-    Olá!
+Olá!
 
-    Uma nova atualização foi registrada no processo.
+Uma nova atualização foi registrada no processo.
 
-    *Detalhes da Atualização:*
-    📋 *Tipo*: ${
-      entry.type === "comment"
-        ? "Comentário"
-        : entry.type === "status"
-        ? "Mudança de Status"
-        : "Documento"
-    }
-    👤 *Responsável*: ${entry.user}
-    📅 *Data*: ${entry.date}
-    📝 *Descrição*: ${entry.description}
+*Detalhes da Atualização:*
+📋 *Tipo*: ${entry.type === "comment" ? "Comentário" : entry.type === "status" ? "Mudança de Status" : "Documento"}
+👤 *Responsável*: ${entry.user}
+📅 *Data*: ${entry.date}
+📝 *Descrição*: ${entry.description}
 
-    Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
+Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
 
-    Atenciosamente,
-    Equipe de Gerenciamento de Processos
-        `.trim();
+Atenciosamente,
+Equipe de Gerenciamento de Processos`.trim();
 
     return message;
   };
 
   const handleWhatsAppShare = (entry: HistoryEntry) => {
     if (!contactNumber) {
+      toast.error("Número de telefone não disponível");
       return;
     }
-    const formattedNumber = contactNumber.replace(/\D/g, "");
-    const text = encodeURIComponent(formatWhatsAppMessage(entry));
-    const whatsappUrl = `https://wa.me/${formattedNumber}?text=${text}`;
-    window.open(whatsappUrl, "_blank");
+
+    try {
+      const formattedNumber = contactNumber.replace(/\D/g, "");
+      const text = encodeURIComponent(formatWhatsAppMessage(entry));
+      const whatsappUrl = `https://wa.me/${formattedNumber}?text=${text}`;
+      window.open(whatsappUrl, "_blank");
+      toast.success("Mensagem preparada para envio");
+    } catch (error) {
+      toast.error("Erro ao preparar mensagem para WhatsApp");
+      console.error("Erro ao compartilhar via WhatsApp:", error);
+    }
   };
 
   return (
@@ -79,7 +81,7 @@ export const ProcessHistory = ({
               <div className="flex justify-between items-start mb-1">
                 <span className="font-medium">{entry.user}</span>
                 <div className="flex items-center gap-2">
-                  {contactNumber && entry.type === "comment" && (
+                  {contactNumber && (
                     <Button
                       variant="outline"
                       size="sm"
