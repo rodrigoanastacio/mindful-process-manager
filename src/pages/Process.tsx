@@ -23,7 +23,7 @@ import { ProcessDetailsModal } from "@/components/modal/ProcessDetailsModal";
 import { EditProcessModal } from "@/components/modal/EditProcessModal";
 import { processService } from "@/services/supabaseService";
 
-export const ProcessTable = () => {
+export const Process = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");

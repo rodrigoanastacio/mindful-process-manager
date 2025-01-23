@@ -12,7 +12,7 @@ import {
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "@/pages/Index";
-import { ProcessTable } from "@/pages/ProcessTable";
+import { Process } from "@/pages/Process";
 import { LegalPartner } from "@/pages/LegalPartner";
 import Departments from "@/pages/Departments";
 import Login from "@/pages/Login";
@@ -69,11 +69,11 @@ const AppRoutes = () => {
   }, [checkUserSession]);
 
   useEffect(() => {
-    const publicRoutes = ['/login'];
+    const publicRoutes = ["/login"];
     const isPublicRoute = publicRoutes.includes(location.pathname);
 
     if (!loading && !user && !isPublicRoute) {
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
     }
   }, [user, navigate, location, loading]);
 
@@ -81,15 +81,15 @@ const AppRoutes = () => {
     try {
       await supabase.auth.signOut();
       toast({
-        title: "Logout realizado com sucesso!"
+        title: "Logout realizado com sucesso!",
       });
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Erro no logout:", error);
       toast({
         title: "Erro no logout",
         description: "Não foi possível realizar o logout",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   }, [navigate]);
@@ -116,15 +116,12 @@ const AppRoutes = () => {
                       </div>
                       <Routes>
                         <Route path="/" element={<Index />} />
-                        <Route path="/processos" element={<ProcessTable />} />
+                        <Route path="/processos" element={<Process />} />
                         <Route
                           path="/parceiros-juridico"
                           element={<LegalPartner />}
                         />
-                        <Route
-                          path="/departments"
-                          element={<Departments />}
-                        />
+                        <Route path="/departments" element={<Departments />} />
                       </Routes>
                     </div>
                   </main>
