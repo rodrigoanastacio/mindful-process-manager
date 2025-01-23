@@ -14,11 +14,23 @@ interface HistoryEntry {
 interface ProcessHistoryProps {
   entries: HistoryEntry[];
   contactNumber?: string;
+  processData?: {
+    numero: string;
+    cliente?: {
+      nome: string;
+    };
+    responsavel?: {
+      nome: string;
+    };
+    status: string;
+    tipo: string;
+  };
 }
 
 export const ProcessHistory = ({
   entries,
   contactNumber,
+  processData,
 }: ProcessHistoryProps) => {
   const getIcon = (type: HistoryEntry["type"]) => {
     switch (type) {
@@ -33,19 +45,30 @@ export const ProcessHistory = ({
 
   const formatWhatsAppMessage = (entry: HistoryEntry) => {
     const message = `
-*Atualização no Status do Processo*
+*Atualização no Processo*
 
 Olá!
 
-Uma nova atualização foi registrada no processo.
+Nova atualização registrada no processo ${processData?.numero}.
+
+*Dados do Processo:*
+📎 *Número*: ${processData?.numero}
+👥 *Cliente*: ${processData?.cliente?.nome || "Não especificado"}
+👤 *Responsável*: ${processData?.responsavel?.nome || "Não especificado"}
+📊 *Status Atual*: ${processData?.status}
+📄 *Tipo*: ${processData?.tipo}
 
 *Detalhes da Atualização:*
-📋 *Tipo*: ${entry.type === "comment" ? "Comentário" : entry.type === "status" ? "Mudança de Status" : "Documento"}
-👤 *Responsável*: ${entry.user}
+📝 *Tipo*: ${
+      entry.type === "comment"
+        ? "Comentário"
+        : entry.type === "status"
+        ? "Mudança de Status"
+        : "Documento"
+    }
+👤 *Atualizado por*: ${entry.user || "Não especificado"}
 📅 *Data*: ${entry.date}
-📝 *Descrição*: ${entry.description}
-
-Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
+📋 *Descrição*: ${entry.description}
 
 Atenciosamente,
 Equipe de Gerenciamento de Processos`.trim();
