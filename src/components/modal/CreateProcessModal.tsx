@@ -33,7 +33,7 @@ export const CreateProcessModal = ({
   const [status, setStatus] = useState<ProcessStatus>("em_andamento");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
-  const [clienteTelefone, setClienteTelefone] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ export const CreateProcessModal = ({
         advogado_responsavel_id: lawyerId || null,
         arquivos_relacionados: null,
         data_criacao: new Date().toISOString(),
-        cliente_telefone: clienteTelefone,
+        cliente_telefone: clientPhone,
       });
 
       queryClient.invalidateQueries({ queryKey: ["processes"] });
@@ -72,7 +72,7 @@ export const CreateProcessModal = ({
     setStatus("em_andamento");
     setDepartmentId("");
     setLawyerId("");
-    setClienteTelefone("");
+    setClientPhone("");
   };
 
   return (
@@ -109,29 +109,9 @@ export const CreateProcessModal = ({
                   setLawyerId={setLawyerId}
                   status={status}
                   setStatus={setStatus}
+                  clientPhone={clientPhone}
+                  setClientPhone={setClientPhone}
                 />
-              )}
-
-              {step === 1 && (
-                <div className="space-y-4">
-                  <Label htmlFor="clienteTelefone">
-                    Número de Contato do Cliente
-                  </Label>
-                  <InputMask
-                    mask="(99) 99999-9999"
-                    value={clienteTelefone}
-                    onChange={(e) => setClienteTelefone(e.target.value)}
-                  >
-                    {(inputProps: any) => (
-                      <Input
-                        {...inputProps}
-                        id="clienteTelefone"
-                        placeholder="(00) 00000-0000"
-                        type="tel"
-                      />
-                    )}
-                  </InputMask>
-                </div>
               )}
 
               <div className="p-6 flex justify-between items-center">
@@ -148,20 +128,10 @@ export const CreateProcessModal = ({
                   </>
                 ) : (
                   <>
-                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                        className="rounded"
-                      >
-                        Cancelar
-                      </Button>
-                    </div>
-                    <div className="rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-                      <Button className="rounded" onClick={() => setStep(2)}>
-                        Próximo
-                      </Button>
-                    </div>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={() => setStep(2)}>Próximo</Button>
                   </>
                 )}
               </div>

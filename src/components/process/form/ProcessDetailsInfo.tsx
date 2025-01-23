@@ -158,6 +158,24 @@ export function ProcessDetailsInfo({
             </SelectContent>
           </Select>
         </div>
+
+        <div>
+          <Label>Telefone do Cliente</Label>
+          <InputMask
+            mask="(99) 99999-9999"
+            value={clientPhone}
+            onChange={(e) => setClientPhone(e.target.value)}
+          >
+            {(inputProps: any) => (
+              <Input
+                {...inputProps}
+                placeholder="(00) 00000-0000"
+                type="tel"
+                className="mt-2"
+              />
+            )}
+          </InputMask>
+        </div>
       </div>
     </div>
   );

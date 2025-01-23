@@ -36,7 +36,7 @@ export const EditProcessModal = ({
   const [status, setStatus] = useState<ProcessStatus>("em_andamento");
   const [departmentId, setDepartmentId] = useState("");
   const [lawyerId, setLawyerId] = useState("");
-  const [clienteTelefone, setClienteTelefone] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
 
   // Fetch process data
   const { data: process, isLoading } = useQuery({
@@ -72,7 +72,7 @@ export const EditProcessModal = ({
       setStatus(process.status);
       setDepartmentId(process.departamento_id || "");
       setLawyerId(process.advogado_responsavel_id || "");
-      setClienteTelefone(process.cliente_telefone || "");
+      setClientPhone(process.cliente_telefone || "");
     }
   }, [process]);
 
@@ -88,7 +88,7 @@ export const EditProcessModal = ({
       prioridade: priority,
       departamento_id: departmentId || null,
       advogado_responsavel_id: lawyerId || null,
-      cliente_telefone: clienteTelefone,
+      cliente_telefone: clientPhone,
     };
 
     updateMutation.mutate(updatedProcess);
@@ -140,6 +140,8 @@ export const EditProcessModal = ({
                   setLawyerId={setLawyerId}
                   status={status}
                   setStatus={setStatus}
+                  clientPhone={clientPhone}
+                  setClientPhone={setClientPhone}
                 />
               )}
 
@@ -150,8 +152,8 @@ export const EditProcessModal = ({
                   </Label>
                   <InputMask
                     mask="(99) 99999-9999"
-                    value={clienteTelefone}
-                    onChange={(e) => setClienteTelefone(e.target.value)}
+                    value={clientPhone}
+                    onChange={(e) => setClientPhone(e.target.value)}
                   >
                     {(inputProps: any) => (
                       <Input
