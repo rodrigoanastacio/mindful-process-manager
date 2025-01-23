@@ -35,20 +35,20 @@ export const ProcessTable = () => {
   const [editProcessId, setEditProcessId] = useState<string | null>(null);
 
   const { data: processes, isLoading } = useQuery({
-    queryKey: ['processes'],
-    queryFn: processService.getAll
+    queryKey: ["processes"],
+    queryFn: processService.getAll,
   });
 
   const deleteMutation = useMutation({
     mutationFn: processService.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['processes'] });
+      queryClient.invalidateQueries({ queryKey: ["processes"] });
       toast.success("Processo excluído com sucesso!");
     },
     onError: (error) => {
       toast.error("Erro ao excluir processo");
-      console.error('Error deleting process:', error);
-    }
+      console.error("Error deleting process:", error);
+    },
   });
 
   const filteredProcesses = processes?.filter((process) => {
@@ -74,6 +74,8 @@ export const ProcessTable = () => {
     setIsEditModalOpen(true);
   };
 
+  console.log("PROCESSES :::", processes);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6 animate-fade-in animate-fade-out">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -98,17 +100,16 @@ export const ProcessTable = () => {
           onStatusFilter={setStatusFilter}
         />
 
-        <div className="bg-white rounded-lg shadow">
-          <Table>
+        <div className="bg-white rounded border">
+          <Table className="rounded">
             <TableHeader>
               <TableRow>
-                <TableHead>Protocolo</TableHead>
-                <TableHead>Título</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Prioridade</TableHead>
-                <TableHead>Responsável</TableHead>
-                <TableHead>Departamento</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
+                <TableHead className="font-bold">N° Processo</TableHead>
+                <TableHead className="font-bold">Título</TableHead>
+                <TableHead className="font-bold">Responsável</TableHead>
+                <TableHead className="font-bold">Departamento</TableHead>
+                <TableHead className="font-bold">Status</TableHead>
+                <TableHead className="font-bold text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -149,13 +150,12 @@ export const ProcessTable = () => {
                       </TableCell>
                       <TableCell>{process.titulo}</TableCell>
                       <TableCell>
+                        {process.advogado_responsavel?.nome_completo || "-"}
+                      </TableCell>
+                      <TableCell>{process.departamento?.nome || "-"}</TableCell>
+                      <TableCell>
                         <ProcessStatus status={process.status} />
                       </TableCell>
-                      <TableCell>
-                        <ProcessPriority priority={process.prioridade} />
-                      </TableCell>
-                      <TableCell>{process.advogado_responsavel?.nome_completo || '-'}</TableCell>
-                      <TableCell>{process.departamento?.nome || '-'}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
