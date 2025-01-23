@@ -175,7 +175,7 @@ export const ProcessDetailsModal = ({
               </div>
             </div>
 
-            {/* <div>
+            <div>
               <h3 className="text-lg font-semibold mb-4">
                 Histórico do Processo
               </h3>
@@ -183,7 +183,7 @@ export const ProcessDetailsModal = ({
                 entries={history}
                 contactNumber={process.contactNumber}
               />
-            </div> */}
+            </div>
           </div>
         </div>
       </DialogContent>
