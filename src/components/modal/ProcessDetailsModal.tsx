@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 import { ProcessHistory } from "@/components/ProcessHistory";
-import { useProcess } from "@/context/ProcessContext";
+import { useProcess } from "@/context/ProcessContext/useProcess";
 
 import { BaseProcess } from "@/types/process";
 
@@ -55,7 +55,7 @@ export const ProcessDetailsModal = ({
     const newEntry = {
       id: Date.now().toString(),
       type: "comment" as const,
-      user: process.assignee,
+      user: "Dayane",
       date: new Date().toLocaleDateString(),
       description: newComment,
     };
@@ -76,7 +76,7 @@ export const ProcessDetailsModal = ({
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">
-                {process.title}
+                {process.titulo}
               </h2>
               <div className="mt-2 flex items-center gap-3">
                 <span className="text-sm text-gray-600">

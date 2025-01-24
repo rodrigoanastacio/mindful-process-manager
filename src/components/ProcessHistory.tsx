@@ -3,7 +3,7 @@ import { MessageSquare, AlertCircle, FileText, Send } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 
-import { useProcess } from "@/context/ProcessContext";
+import { useProcess } from "@/context/ProcessContext/useProcess";
 
 interface HistoryEntry {
   id: string;
@@ -79,7 +79,7 @@ Equipe de Gerenciamento de Processos`.trim();
               <div className="flex justify-between items-start mb-1">
                 <span className="font-medium">{entry.user}</span>
                 <div className="flex items-center gap-2">
-                  {process.cliente_telefone && (
+                  {process?.cliente_telefone && (
                     <Button
                       variant="outline"
                       size="sm"

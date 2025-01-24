@@ -21,7 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
 const queryClient = new QueryClient();
-import { ProcessProvider } from "@/context/ProcessContext";
+import { ProcessProvider } from "@/context/ProcessContext/";
 
 const App = () => {
   return (
