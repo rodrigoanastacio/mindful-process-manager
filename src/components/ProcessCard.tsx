@@ -162,14 +162,14 @@ export const ProcessCard = ({
         onOpenChange={setShowDetails}
         process={{
           id,
-          numero_processo: protocol, // Map protocol to numero_processo
+          numero_processo: protocol,
           titulo: title,
           descricao: description,
           status,
           data_criacao: date,
           prazo: deadline,
           responsavel: assignee,
-          departamento: department,
+          departamento: { nome: department }, // Fix: Wrap department in an object with nome property
           prioridade: priority,
           cliente_telefone: contactNumber
         }}
