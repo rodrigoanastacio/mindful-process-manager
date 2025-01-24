@@ -7,12 +7,16 @@ import {
   getFilteredRowModel,
   ColumnDef,
   flexRender,
+  ColumnFiltersState,
+  SortingState,
 } from "@tanstack/react-table";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Edit, Trash, ArrowUpDown } from "lucide-react";
+import { Eye, Edit, Trash, ArrowUpDown, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ProcessStatus } from "./ProcessStatus";
+import { ProcessAdvancedFilters } from "./ProcessAdvancedFilters";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 
 interface ProcessTableProps {
@@ -30,39 +34,75 @@ export const ProcessTable = ({
   onEdit,
   onDelete,
 }: ProcessTableProps) => {
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
         accessorKey: "numero_processo",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              N° Processo
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          );
-        },
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="whitespace-nowrap"
+          >
+            N° Processo
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
       },
       {
         accessorKey: "titulo",
-        header: "Título",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Título
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
       },
       {
         accessorKey: "advogado_responsavel.nome_completo",
         header: "Responsável",
-        cell: ({ row }) => 
-          row.original.advogado_responsavel?.nome_completo || "-",
+        cell: ({ row }) => row.original.advogado_responsavel?.nome_completo || "-",
       },
       {
         accessorKey: "departamento.nome",
-        header: "Departamento",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Departamento
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
         cell: ({ row }) => row.original.departamento?.nome || "-",
+      },
+      {
+        accessorKey: "data_criacao",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="whitespace-nowrap"
+          >
+            Data Criação
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-gray-500" />
+            {format(new Date(row.original.data_criacao), "dd/MM/yyyy", {
+              locale: ptBR,
+            })}
+          </div>
+        ),
       },
       {
         accessorKey: "status",
@@ -72,11 +112,15 @@ export const ProcessTable = ({
       {
         id: "actions",
         cell: ({ row }) => (
-          <div className="flex justify-end gap-2">
+          <motion.div 
+            className="flex justify-end gap-2"
+            whileHover={{ scale: 1.05 }}
+          >
             <Button
               variant="outline"
               size="icon"
               onClick={() => onView(row.original)}
+              className="hover:bg-primary/10"
             >
               <Eye className="h-4 w-4" />
             </Button>
@@ -84,18 +128,26 @@ export const ProcessTable = ({
               variant="outline"
               size="icon"
               onClick={() => onEdit(row.original.id)}
+              className="hover:bg-blue-50"
             >
               <Edit className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
-              onClick={() => onDelete(row.original.id)}
-              className="text-red-500 hover:text-red-700"
+              onClick={() => {
+                toast.warning("Tem certeza que deseja excluir?", {
+                  action: {
+                    label: "Excluir",
+                    onClick: () => onDelete(row.original.id),
+                  },
+                });
+              }}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50"
             >
               <Trash className="h-4 w-4" />
             </Button>
-          </div>
+          </motion.div>
         ),
       },
     ],
@@ -107,15 +159,25 @@ export const ProcessTable = ({
     columns,
     state: {
       sorting,
+      columnFilters,
       globalFilter,
     },
     onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
+
+  const handleAdvancedFilters = (filters: any) => {
+    setGlobalFilter(filters.search);
+    if (filters.status) {
+      table.getColumn("status")?.setFilterValue(filters.status);
+    }
+    // Adicione mais filtros conforme necessário
+  };
 
   if (isLoading) {
     return (
@@ -131,41 +193,16 @@ export const ProcessTable = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Input
-          placeholder="Filtrar processos..."
-          value={globalFilter ?? ""}
-          onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
-        />
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Próximo
-          </Button>
-        </div>
-      </div>
+      <ProcessAdvancedFilters onFilter={handleAdvancedFilters} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-md border"
+        className="rounded-md border bg-white overflow-hidden"
       >
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100 text-gray-700">
+            <thead className="bg-gray-50 text-gray-700">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -192,7 +229,7 @@ export const ProcessTable = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="border-b hover:bg-gray-50"
+                    className="border-b hover:bg-gray-50 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-4 py-3">
@@ -209,6 +246,30 @@ export const ProcessTable = ({
           </table>
         </div>
       </motion.div>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-500">
+          Total de {data.length} processos
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Próximo
+          </Button>
+        </div>
+      </div>
 
       {data.length === 0 && (
         <motion.div
