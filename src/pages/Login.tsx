@@ -74,12 +74,6 @@ const Login = () => {
                   >
                     Senha
                   </Label>
-                  <button
-                    type="button"
-                    className="text-sm font-medium text-primary hover:text-primary/80"
-                  >
-                    Esqueceu a senha?
-                  </button>
                 </div>
                 <Input
                   id="password"
@@ -99,12 +93,12 @@ const Login = () => {
 
             <div className="text-center">
               <span className="text-sm text-gray-500">
-                Não tem uma conta?{" "}
+                Esqueceu sua senha?{" "}
                 <button
                   type="button"
                   className="font-medium text-primary hover:text-primary/80"
                 >
-                  Registre-se
+                  Clique aqui.
                 </button>
               </span>
             </div>
