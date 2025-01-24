@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   CalendarDays,
@@ -17,23 +17,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 import { ProcessHistory } from "@/components/ProcessHistory";
+import { useProcess } from "@/context/ProcessContext";
+
+import { BaseProcess } from "@/types/process";
 
 interface ProcessDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  process: {
-    id: string;
-    protocol: string;
-    title: string;
-    description: string;
-    status: string;
-    date: string;
-    deadline: string;
-    assignee: string;
-    department: string;
-    priority: string;
-    contactNumber?: string;
-  };
+  process: BaseProcess;
 }
 
 export const ProcessDetailsModal = ({
@@ -51,6 +42,11 @@ export const ProcessDetailsModal = ({
       description: "Processo criado",
     },
   ]);
+  const { setProcess } = useProcess();
+
+  useEffect(() => {
+    setProcess(process);
+  }, [process, setProcess]);
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +64,8 @@ export const ProcessDetailsModal = ({
     setNewComment("");
     toast.success("Comentário adicionado com sucesso!");
   };
+
+  console.log("Process ProcessDetailsModal ::::", process);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

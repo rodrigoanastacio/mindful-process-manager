@@ -3,6 +3,8 @@ import { MessageSquare, AlertCircle, FileText, Send } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 
+import { useProcess } from "@/context/ProcessContext";
+
 interface HistoryEntry {
   id: string;
   type: "comment" | "status" | "document";
@@ -20,6 +22,8 @@ export const ProcessHistory = ({
   entries,
   contactNumber,
 }: ProcessHistoryProps) => {
+  const { process } = useProcess();
+  console.log("Process ProcessHistory ::::", process);
   const getIcon = (type: HistoryEntry["type"]) => {
     switch (type) {
       case "comment":
@@ -33,19 +37,13 @@ export const ProcessHistory = ({
 
   const formatWhatsAppMessage = (entry: HistoryEntry) => {
     const message = `
-*Atualização no Status do Processo*
+*Atualização do Processo* ${process.numero_processo}
+*Responsável*: ${process.advogado_responsavel.nome_completo}
 
-Olá!
+*Título*: ${process.titulo}
+*Descrição*: ${process.descricao}
 
-Uma nova atualização foi registrada no processo.
-
-*Detalhes da Atualização:*
-📋 *Tipo*: ${entry.type === "comment" ? "Comentário" : entry.type === "status" ? "Mudança de Status" : "Documento"}
-👤 *Responsável*: ${entry.user}
-📅 *Data*: ${entry.date}
-📝 *Descrição*: ${entry.description}
-
-Caso tenha dúvidas ou precise de mais informações, entre em contato com o responsável pelo processo.
+Caso tenha dúvidas ou precise de mais informações, entre em contato conosco.
 
 Atenciosamente,
 Equipe de Gerenciamento de Processos`.trim();
@@ -54,13 +52,13 @@ Equipe de Gerenciamento de Processos`.trim();
   };
 
   const handleWhatsAppShare = (entry: HistoryEntry) => {
-    if (!contactNumber) {
+    if (!process.cliente_telefone) {
       toast.error("Número de telefone não disponível");
       return;
     }
 
     try {
-      const formattedNumber = contactNumber.replace(/\D/g, "");
+      const formattedNumber = process.cliente_telefone.replace(/\D/g, "");
       const text = encodeURIComponent(formatWhatsAppMessage(entry));
       const whatsappUrl = `https://wa.me/${formattedNumber}?text=${text}`;
       window.open(whatsappUrl, "_blank");
@@ -81,7 +79,7 @@ Equipe de Gerenciamento de Processos`.trim();
               <div className="flex justify-between items-start mb-1">
                 <span className="font-medium">{entry.user}</span>
                 <div className="flex items-center gap-2">
-                  {contactNumber && (
+                  {process.cliente_telefone && (
                     <Button
                       variant="outline"
                       size="sm"
