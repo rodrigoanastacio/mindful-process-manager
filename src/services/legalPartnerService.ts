@@ -2,19 +2,20 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface LegalPartner {
   id?: string;
-  nome: string;
+  nome_completo: string;
   email: string;
-  departamento: string;
-  usuario_id?: string;
+  especializacao: string | null;
+  telefone: string | null;
   created_at?: string;
+  updated_at?: string;
 }
 
 export const legalPartnerService = {
   async getAll() {
     const { data, error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .select('*')
-      .order('nome');
+      .order('nome_completo');
 
     if (error) {
       console.error('Erro ao buscar advogados:', error);
@@ -24,9 +25,9 @@ export const legalPartnerService = {
     return data;
   },
 
-  async create(partner: Omit<LegalPartner, 'id' | 'created_at'>) {
+  async create(partner: Omit<LegalPartner, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .insert(partner)
       .select()
       .single();
@@ -41,7 +42,7 @@ export const legalPartnerService = {
 
   async update(id: string, partner: Partial<LegalPartner>) {
     const { data, error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .update(partner)
       .eq('id', id)
       .select()
@@ -57,7 +58,7 @@ export const legalPartnerService = {
 
   async delete(id: string) {
     const { error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .delete()
       .eq('id', id);
 

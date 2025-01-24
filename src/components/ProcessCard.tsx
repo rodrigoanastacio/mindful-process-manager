@@ -15,7 +15,7 @@ import { ProcessStatus as ProcessStatusType, ProcessPriority as ProcessPriorityT
 
 interface ProcessCardProps {
   id: string;
-  protocol: string;
+  protocol: string; // This is numero_processo in the database
   title: string;
   description: string;
   status: ProcessStatusType;
@@ -32,7 +32,7 @@ interface ProcessCardProps {
 
 export const ProcessCard = ({
   id,
-  protocol,
+  protocol,  // This maps to numero_processo
   title,
   description,
   status,
@@ -162,16 +162,16 @@ export const ProcessCard = ({
         onOpenChange={setShowDetails}
         process={{
           id,
-          protocol,
-          title,
-          description,
+          numero_processo: protocol, // Map protocol to numero_processo
+          titulo: title,
+          descricao: description,
           status,
-          date,
-          deadline,
-          assignee,
-          department,
-          priority,
-          contactNumber
+          data_criacao: date,
+          prazo: deadline,
+          responsavel: assignee,
+          departamento: department,
+          prioridade: priority,
+          cliente_telefone: contactNumber
         }}
       />
     </div>
