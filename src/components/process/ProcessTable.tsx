@@ -9,9 +9,11 @@ import {
   flexRender,
   ColumnFiltersState,
   SortingState,
+  VisibilityState,
+  ColumnPinningState,
 } from "@tanstack/react-table";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Edit, Trash, ArrowUpDown, Calendar } from "lucide-react";
+import { Eye, Edit, Trash, ArrowUpDown, Calendar, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProcessStatus } from "./ProcessStatus";
 import { Input } from "@/components/ui/input";
@@ -19,6 +21,15 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 
 interface ProcessTableProps {
   data: any[];
@@ -38,6 +49,9 @@ export const ProcessTable = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
@@ -70,6 +84,7 @@ export const ProcessTable = ({
         accessorKey: "advogado_responsavel.nome_completo",
         header: "Responsável",
         cell: ({ row }) => row.original.advogado_responsavel?.nome_completo || "-",
+        enablePinning: true,
       },
       {
         accessorKey: "departamento.nome",
@@ -83,6 +98,7 @@ export const ProcessTable = ({
           </Button>
         ),
         cell: ({ row }) => row.original.departamento?.nome || "-",
+        enablePinning: true,
       },
       {
         accessorKey: "data_criacao",
@@ -109,9 +125,11 @@ export const ProcessTable = ({
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => <ProcessStatus status={row.original.status} />,
+        enablePinning: true,
       },
       {
         id: "actions",
+        enableHiding: false,
         cell: ({ row }) => (
           <motion.div 
             className="flex justify-end gap-2"
@@ -162,10 +180,17 @@ export const ProcessTable = ({
       sorting,
       columnFilters,
       globalFilter,
+      columnVisibility,
+      columnPinning,
+      rowSelection,
     },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
+    onColumnPinningChange: setColumnPinning,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -186,13 +211,45 @@ export const ProcessTable = ({
 
   return (
     <div className="space-y-4">
-      <div className="relative flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder="Buscar por título ou protocolo..."
-          className="pl-10 rounded"
-          onChange={(e) => setGlobalFilter(e.target.value)}
-        />
+      <div className="flex items-center justify-between gap-4">
+        <div className="relative flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Buscar por título ou protocolo..."
+            className="pl-10 rounded"
+            onChange={(e) => setGlobalFilter(e.target.value)}
+          />
+        </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              <Settings2 className="mr-2 h-4 w-4" />
+              Visualização
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[200px]">
+            <DropdownMenuLabel>Alternar Colunas</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <motion.div
@@ -229,7 +286,11 @@ export const ProcessTable = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="border-b hover:bg-gray-50 transition-colors"
+                    className={`border-b hover:bg-gray-50 transition-colors ${
+                      row.getIsSelected() ? "bg-primary/5" : ""
+                    }`}
+                    onClick={() => row.toggleSelected()}
+                    style={{ cursor: "pointer" }}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-4 py-3">
@@ -249,7 +310,14 @@ export const ProcessTable = ({
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-500">
-          Total de {data.length} processos
+          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+            <span>
+              {table.getFilteredSelectedRowModel().rows.length} de{" "}
+              {table.getFilteredRowModel().rows.length} processo(s) selecionado(s)
+            </span>
+          ) : (
+            <span>Total de {data.length} processos</span>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <Button
