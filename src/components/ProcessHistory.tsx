@@ -23,7 +23,6 @@ export const ProcessHistory = ({
   contactNumber,
 }: ProcessHistoryProps) => {
   const { process } = useProcess();
-  console.log("Process ProcessHistory ::::", process);
   const getIcon = (type: HistoryEntry["type"]) => {
     switch (type) {
       case "comment":
@@ -65,7 +64,6 @@ Equipe de Gerenciamento de Processos`.trim();
       toast.success("Mensagem preparada para envio");
     } catch (error) {
       toast.error("Erro ao preparar mensagem para WhatsApp");
-      console.error("Erro ao compartilhar via WhatsApp:", error);
     }
   };
 

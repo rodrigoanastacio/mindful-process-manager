@@ -65,8 +65,6 @@ export const ProcessDetailsModal = ({
     toast.success("Comentário adicionado com sucesso!");
   };
 
-  console.log("Process ProcessDetailsModal ::::", process);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white max-w-full h-screen flex flex-col p-0 gap-0">
