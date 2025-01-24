@@ -80,7 +80,7 @@ export const ProcessDetailsModal = ({
               </h2>
               <div className="mt-2 flex items-center gap-3">
                 <span className="text-sm text-gray-600">
-                  Protocolo: {process.protocol}
+                  N°: {process.numero_processo}
                 </span>
                 <Badge
                   variant="outline"
@@ -93,7 +93,7 @@ export const ProcessDetailsModal = ({
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="gap-2">
                 <CalendarDays className="h-4 w-4" />
-                <span>{process.deadline}</span>
+                <span>{process.data_criacao}</span>
               </Button>
             </div>
           </div>
@@ -107,16 +107,16 @@ export const ProcessDetailsModal = ({
                   Detalhes do Processo
                 </h3>
                 <div className="space-y-4">
-                  <p className="text-gray-600">{process.description}</p>
+                  <p className="text-gray-600">{process.descricao}</p>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2 text-gray-600">
                       <User className="h-4 w-4" />
-                      <span>{process.assignee}</span>
+                      <span>{process.advogado_responsavel.nome_completo}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <CalendarDays className="h-4 w-4" />
-                      <span>Prazo: {process.deadline}</span>
+                      <span>Atualizado em: {process.updated_at}</span>
                     </div>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export const ProcessDetailsModal = ({
                         id="comment"
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        rows={4}
+                        rows={6}
                         placeholder="Escreva seu comentário..."
                         className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-xl"
                       />
@@ -167,20 +167,10 @@ export const ProcessDetailsModal = ({
                   </h3>
                   <ProcessHistory
                     entries={history}
-                    contactNumber={process.contactNumber}
+                    contactNumber={process.cliente_telefone}
                   />
                 </div>
               </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">
-                Histórico do Processo
-              </h3>
-              <ProcessHistory
-                entries={history}
-                contactNumber={process.contactNumber}
-              />
             </div>
           </div>
         </div>
