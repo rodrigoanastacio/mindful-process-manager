@@ -14,10 +14,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Edit, Trash, ArrowUpDown, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProcessStatus } from "./ProcessStatus";
-import { ProcessAdvancedFilters } from "./ProcessAdvancedFilters";
+import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import { Search } from "lucide-react";
 
 interface ProcessTableProps {
   data: any[];
@@ -171,14 +172,6 @@ export const ProcessTable = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const handleAdvancedFilters = (filters: any) => {
-    setGlobalFilter(filters.search);
-    if (filters.status) {
-      table.getColumn("status")?.setFilterValue(filters.status);
-    }
-    // Adicione mais filtros conforme necessário
-  };
-
   if (isLoading) {
     return (
       <motion.div
@@ -193,7 +186,14 @@ export const ProcessTable = ({
 
   return (
     <div className="space-y-4">
-      <ProcessAdvancedFilters onFilter={handleAdvancedFilters} />
+      <div className="relative flex-1 rounded focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Buscar por título ou protocolo..."
+          className="pl-10 rounded"
+          onChange={(e) => setGlobalFilter(e.target.value)}
+        />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
