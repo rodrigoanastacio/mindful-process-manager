@@ -6,6 +6,7 @@ interface BaseProcess {
   status: string;
   data_criacao: string;
   updated_at: string;
+  prazo: string;
   prioridade: string;
   tipo: string;
   departamento: {

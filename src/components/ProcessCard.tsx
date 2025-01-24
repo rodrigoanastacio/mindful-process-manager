@@ -15,7 +15,7 @@ import { ProcessStatus as ProcessStatusType, ProcessPriority as ProcessPriorityT
 
 interface ProcessCardProps {
   id: string;
-  protocol: string; // This is numero_processo in the database
+  protocol: string;
   title: string;
   description: string;
   status: ProcessStatusType;
@@ -32,7 +32,7 @@ interface ProcessCardProps {
 
 export const ProcessCard = ({
   id,
-  protocol,  // This maps to numero_processo
+  protocol,
   title,
   description,
   status,
@@ -168,10 +168,19 @@ export const ProcessCard = ({
           status,
           data_criacao: date,
           prazo: deadline,
-          responsavel: assignee,
-          departamento: { nome: department }, // Fix: Wrap department in an object with nome property
+          advogado_responsavel: {
+            nome_completo: assignee
+          },
+          departamento: { 
+            nome: department 
+          },
           prioridade: priority,
-          cliente_telefone: contactNumber
+          cliente_telefone: contactNumber,
+          tipo: "civil", // Adding required field
+          departamento_id: "1", // Adding required field
+          advogado_responsavel_id: "1", // Adding required field
+          updated_at: new Date().toISOString(),
+          arquivos_relacionados: null
         }}
       />
     </div>
