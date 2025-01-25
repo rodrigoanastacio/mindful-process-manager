@@ -16,18 +16,37 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "/reset-password",
-      });
+      // Verifica se o e-mail existe no banco de dados
+      const { data, error: userError } = await supabase
+        .from("usuarios")
+        .select("email")
+        .eq("email", email)
+        .single();
 
-      if (error) {
-        throw error;
+      if (userError || !data) {
+        throw new Error("E-mail não cadastrado");
+      }
+
+      // Se o e-mail existe, prossegue com o envio do e-mail de recuperação
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: "http://localhost:8080/reset-password",
+        }
+      );
+
+      if (resetError) {
+        throw resetError;
       }
 
       toast.success("E-mail de redefinição enviado com sucesso!");
       navigate("/login");
     } catch (error) {
-      toast.error("Erro ao enviar e-mail de redefinição");
+      if (error.message === "E-mail não cadastrado") {
+        toast.error("E-mail não encontrado. Verifique o endereço digitado.");
+      } else {
+        toast.error("Erro ao enviar e-mail de redefinição");
+      }
       console.error(error);
     } finally {
       setLoading(false);
