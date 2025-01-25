@@ -12,7 +12,7 @@ interface LegalPartner {
 export const legalPartnerService = {
   async getAll() {
     const { data, error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .select('*')
       .order('nome');
 
@@ -26,7 +26,7 @@ export const legalPartnerService = {
 
   async create(partner: Omit<LegalPartner, 'id' | 'created_at'>) {
     const { data, error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .insert(partner)
       .select()
       .single();
@@ -41,7 +41,7 @@ export const legalPartnerService = {
 
   async update(id: string, partner: Partial<LegalPartner>) {
     const { data, error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .update(partner)
       .eq('id', id)
       .select()
@@ -57,7 +57,7 @@ export const legalPartnerService = {
 
   async delete(id: string) {
     const { error } = await supabase
-      .from('advogados')
+      .from('advogados_parceiros')
       .delete()
       .eq('id', id);
 
