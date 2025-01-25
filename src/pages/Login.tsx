@@ -96,6 +96,7 @@ const Login = () => {
                 Esqueceu sua senha?{" "}
                 <button
                   type="button"
+                  onClick={() => navigate("/forgot-password")}
                   className="font-medium text-primary hover:text-primary/80"
                 >
                   Clique aqui.

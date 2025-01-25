@@ -19,6 +19,8 @@ import Login from "@/pages/Login";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 
 const queryClient = new QueryClient();
 import { ProcessProvider } from "@/context/ProcessContext/";
@@ -106,6 +108,8 @@ const AppRoutes = () => {
       <div className="min-h-screen flex w-full bg-gray-50">
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
             path="*"
             element={
