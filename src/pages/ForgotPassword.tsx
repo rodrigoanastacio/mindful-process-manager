@@ -31,7 +31,7 @@ const ForgotPassword = () => {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(
         email,
         {
-          redirectTo: "http://localhost:8080/reset-password",
+          redirectTo: window.location.origin + "/reset-password",
         }
       );
 
@@ -46,8 +46,8 @@ const ForgotPassword = () => {
         toast.error("E-mail não encontrado. Verifique o endereço digitado.");
       } else {
         toast.error("Erro ao enviar e-mail de redefinição");
+        console.error(error);
       }
-      console.error(error);
     } finally {
       setLoading(false);
     }
