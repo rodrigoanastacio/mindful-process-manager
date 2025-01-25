@@ -74,7 +74,7 @@ const AppRoutes = () => {
   }, [checkUserSession]);
 
   useEffect(() => {
-    const publicRoutes = ["/login"];
+    const publicRoutes = ["/login", "/forgot-password"];
     const isPublicRoute = publicRoutes.includes(location.pathname);
 
     if (!loading && !user && !isPublicRoute) {

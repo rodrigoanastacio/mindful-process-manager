@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
